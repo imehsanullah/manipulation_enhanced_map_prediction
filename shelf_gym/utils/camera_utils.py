@@ -148,9 +148,9 @@ class Camera:
                                        physicsClientId=client_id)
 
         # Extract RGB, Depth, and Semantics
-        rgb = np.array(images[2])[:, :, :3]
-        depth = images[3]
-        self.semantics = images[4]
+        rgb = np.array(images[2]).reshape(self.height, self.width, 4)[:, :, :3]
+        depth = np.array(images[3]).reshape(self.height, self.width)
+        self.semantics = np.array(images[4]).reshape(self.height, self.width)
 
         # Assign unclassified items (ID=-1) to background ID (5000)
         self.semantics = np.where(self.semantics == -1, 5000, self.semantics)
@@ -256,7 +256,9 @@ class Camera:
                                                       self.cx,
                                                       self.cy)
         pcd = o3d.geometry.PointCloud()
-        o3d_pcd = pcd.create_from_depth_image(o3d.geometry.Image(depth), intrinsic, depth_scale=1000.0, depth_trunc=1000.0, stride=1,project_valid_depth_only = False)
+        # Convert depth to float32 for Open3D compatibility
+        depth_float32 = depth.astype(np.float32)
+        o3d_pcd = pcd.create_from_depth_image(o3d.geometry.Image(depth_float32), intrinsic, depth_scale=1000.0, depth_trunc=1000.0, stride=1,project_valid_depth_only = False)
 
         # transform point cloud to world coordinates
         o3d_pcd.transform(vm)

@@ -953,9 +953,27 @@ class ManipulationEnhancedMapping(PushingCollection):
 
 
 if __name__ == '__main__':
+    import os
     mem = ManipulationEnhancedMapping(render=True, show_vis=False, use_uncertainty_informed_sampling=False)
     mem.reset_env()
-    for i in range(5,25):
-        scene_dir = './data/Hard_scenes/scenes/scene_data_'+ str(i) +'.p'
-        mem.run(predefined_scene_dir=scene_dir)
+
+    # Check if predefined scenes exist, otherwise run with random scenes
+    scene_dir_base = './data/Hard_scenes/scenes/'
+    if os.path.exists(scene_dir_base):
+        # Use predefined scenes
+        for i in range(5, 25):
+            scene_dir = scene_dir_base + 'scene_data_' + str(i) + '.p'
+            if os.path.exists(scene_dir):
+                print(f"Running with predefined scene: {scene_dir}")
+                mem.run(predefined_scene_dir=scene_dir)
+            else:
+                print(f"Scene file not found: {scene_dir}, skipping...")
+    else:
+        # Run with randomly generated scenes
+        print("Predefined scenes not found. Running with randomly generated scenes...")
+        for i in range(5, 25):
+            print(f"Running iteration {i} with random scene...")
+            mem.reset_env()  # Reset to generate a new random scene
+            mem.run(predefined_scene_dir=None)
+
     mem.close()

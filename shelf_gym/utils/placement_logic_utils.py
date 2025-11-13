@@ -259,7 +259,8 @@ def get_placement_grid(ws,resolution):
     y_span = np.arange(coords_min[1],coords_max[1],resolution)
     mg = np.meshgrid(x_span,y_span)
     new_mg = np.concatenate((mg[0].reshape(-1, 1), mg[1].reshape(-1, 1)), axis=1)
-    candidate_points = MultiPoint(new_mg)
+    # Convert to list for Shapely 2.x compatibility with numpy 2.x
+    candidate_points = MultiPoint(new_mg.tolist())
     return candidate_points, x_span, y_span, mg
 
 
