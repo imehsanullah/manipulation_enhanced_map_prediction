@@ -1,0 +1,1719 @@
+pybullet build time: Nov 13 2025 20:22:44
+***  klampt.vis: using Qt5 as the visualization backend  ***
+I will render
+argv[0]=
+startThreads creating 1 threads.
+starting thread 0
+started thread 0 
+argc=3
+argv[0] = --unused
+argv[1] = 
+argv[2] = --start_demo_name=Physics Server
+ExampleBrowserThreadFunc started
+X11 functions dynamically loaded using dlopen/dlsym OK!
+X11 functions dynamically loaded using dlopen/dlsym OK!
+Creating context
+Created GL 3.3 context
+Direct GLX rendering context obtained
+Making context current
+GL_VENDOR=NVIDIA Corporation
+GL_RENDERER=NVIDIA GeForce RTX 4080 SUPER/PCIe/SSE2
+GL_VERSION=3.3.0 NVIDIA 570.195.03
+GL_SHADING_LANGUAGE_VERSION=3.30 NVIDIA via Cg compiler
+pthread_getconcurrency()=0
+Version = 3.3.0 NVIDIA 570.195.03
+Vendor = NVIDIA Corporation
+Renderer = NVIDIA GeForce RTX 4080 SUPER/PCIe/SSE2
+b3Printf: Selected demo: Physics Server
+startThreads creating 1 threads.
+starting thread 0
+started thread 0 
+MotionThreadFunc thread started
+/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/lib/python3.12/site-packages/gymnasium/spaces/box.py:236: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/lib/python3.12/site-packages/gymnasium/spaces/box.py:306: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+URDFParser: Link size: 23
+URDFParser: Joint size: 23
+URDFParser: Done loading robot file /home/user/ehsanullahm1/thesis/manipulation_enhanced_map_prediction/shelf_gym/environments/../meshes/klampt/../urdf/ur5_robotiq_85_klampt.urdf
+WARNING: QApplication was not created in the main() thread.
+QFactoryLoader::QFactoryLoader() checking directory path "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/lib/python3.12/site-packages/PyQt5/Qt5/plugins" ...
+QFactoryLoader::QFactoryLoader() checking directory path "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin" ...
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/2to3"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/2to3-3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/2to3-3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/2to3-3.12"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/2to3-3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/2to3-3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/adig"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/adig'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ahost"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ahost'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/aomdec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/aomdec'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/aomenc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/aomenc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/aserver"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/aserver'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/assistant"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/assistant'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/attr"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/attr'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/autopoint"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/autopoint' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/autopoint' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/balsam"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/balsam'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bunzip2"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bunzip2'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzcat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzcat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzcmp"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzdiff' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzdiff' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzdiff"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzdiff' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzdiff' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzegrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzfgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzip2"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzip2'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzip2recover"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzip2recover'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzless"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzmore' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzmore' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzmore"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzmore' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/bzmore' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/c_rehash"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/c_rehash' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/c_rehash' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cairo-trace"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cairo-trace' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cairo-trace' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/canbusutil"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/canbusutil'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/captoinfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tic'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_create_pkg"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_create_pkg' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_create_pkg' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_find_pkg"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_find_pkg' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_find_pkg' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_generate_changelog"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_generate_changelog' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_generate_changelog' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_package_version"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_package_version' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_package_version' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_prepare_release"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_prepare_release' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_prepare_release' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_tag_changelog"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_tag_changelog' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_tag_changelog' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_test_changelog"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_test_changelog' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/catkin_test_changelog' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/certutil"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/certutil'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_create_cmake_script"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_create_cmake_script' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_create_cmake_script' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_create_CMakeLists"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_create_CMakeLists' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_create_CMakeLists' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_make_macosx_app"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_make_macosx_app' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cgal_make_macosx_app' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cjpeg"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cjpeg'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/clear"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/clear'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cllayerinfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cllayerinfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/compile_et"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/compile_et' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/compile_et' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cups-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cups-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cups-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/curl-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/curl-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/curl-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cwebp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/cwebp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dash-generate-components"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dash-generate-components' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dash-generate-components' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dash-update-components"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dash-update-components' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dash-update-components' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dav1d"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dav1d'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-cleanup-sockets"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-cleanup-sockets'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-daemon"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-daemon'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-launch"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-launch'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-monitor"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-monitor'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-run-session"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-run-session'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-send"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-send'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-test-tool"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-test-tool'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-update-activation-environment"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-update-activation-environment'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-uuidgen"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dbus-uuidgen'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/derb"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/derb'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/designer"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/designer'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/distro"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/distro' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/distro' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/djpeg"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/djpeg'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/docutils"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/docutils' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/docutils' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dwebp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/dwebp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/envsubst"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/envsubst'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exr2aces"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exr2aces'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrenvmap"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrenvmap'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrheader"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrheader'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrinfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrinfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmakepreview"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmakepreview'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmaketiled"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmaketiled'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmanifest"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmanifest'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmetrics"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmetrics'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmultipart"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmultipart'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmultiview"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrmultiview'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrstdattr"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/exrstdattr'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/f2py"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/f2py' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/f2py' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fabric"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fabric' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fabric' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fax2ps"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fax2ps'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fax2tiff"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fax2tiff'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-cache"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-cache'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-cat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-cat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-conflist"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-conflist'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-list"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-list'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-match"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-match'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-pattern"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-pattern'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-query"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-query'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-scan"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-scan'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-validate"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fc-validate'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ffmpeg"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ffmpeg'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ffprobe"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ffprobe'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fixqt4headers.pl"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fixqt4headers.pl' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fixqt4headers.pl' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/flac"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/flac'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/flask"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/flask' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/flask' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fonttools"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fonttools' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fonttools' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/freetype-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/freetype-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/freetype-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fribidi"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/fribidi'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ftfy"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ftfy' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ftfy' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gapplication"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gapplication'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdbus"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdbus'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdbus-codegen"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdbus-codegen' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdbus-codegen' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-csource"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-csource'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-pixdata"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-pixdata'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-query-loaders"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-query-loaders'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-thumbnailer"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gdk-pixbuf-thumbnailer'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/genbrk"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/genbrk'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gencfu"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gencfu'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gencnval"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gencnval'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gendict"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gendict'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/genrb"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/genrb'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/getfattr"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/getfattr'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettext"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettext'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettext.sh"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettext.sh' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettext.sh' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettextize"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettextize' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gettextize' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gi-compile-repository"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gi-compile-repository'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gi-decompile-typelib"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gi-decompile-typelib'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gi-inspect-typelib"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gi-inspect-typelib'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gif2h5"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gif2h5'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gif2rgb"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gif2rgb'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gif2webp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gif2webp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gifbuild"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gifbuild'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gifclrmp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gifclrmp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/giffix"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/giffix'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/giftext"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/giftext'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/giftool"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/giftool'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gio"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gio'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gio-querymodules"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gio-querymodules'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-compile-resources"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-compile-resources'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-compile-schemas"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-compile-schemas'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-genmarshal"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-genmarshal' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-genmarshal' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-gettextize"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-gettextize' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-gettextize' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-mkenums"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-mkenums' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/glib-mkenums' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gobject-query"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gobject-query'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gresource"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gresource'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gsettings"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gsettings'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gss-client"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gss-client'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-device-monitor-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-device-monitor-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-discoverer-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-discoverer-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-inspect-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-inspect-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-launch-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-launch-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-play-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-play-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-stats-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-stats-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-typefind-1.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gst-typefind-1.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gtester"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gtester'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gtester-report"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gtester-report' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/gtester-report' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h264dec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h264dec'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h264enc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h264enc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h52gif"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h52gif'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5c++"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5c++' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5c++' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5cc"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5cc' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5cc' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5clear"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5clear'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5copy"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5copy'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5debug"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5debug'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5delete"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5delete'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5diff"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5diff'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5dump"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5dump'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5fc"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5fc' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5fc' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5format_convert"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5format_convert'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5fuse"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5fuse' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5fuse' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5import"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5import'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5jam"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5jam'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5ls"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5ls'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5mkgrp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5mkgrp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5perf_serial"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5perf_serial'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5redeploy"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5redeploy' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5redeploy' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5repack"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5repack'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5repart"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5repart'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5stat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5stat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5unjam"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5unjam'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5watch"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/h5watch'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-info"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-info'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-shape"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-shape'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-subset"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-subset'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-view"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hb-view'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-annotate"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-annotate'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-bind"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-bind'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-calc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-calc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-compress-dir"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-compress-dir' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-compress-dir' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-diff"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-diff'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-distrib"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-distrib'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-gather-cpuid"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-gather-cpuid'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-gather-topology"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-gather-topology' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-gather-topology' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-info"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-info'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-ls"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lstopo-no-graphics'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-patch"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-patch'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-ps"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/hwloc-ps'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icu-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icu-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icu-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icuexportdata"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icuexportdata'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icuinfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/icuinfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/idle3"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/idle3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/idle3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/idle3.12"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/idle3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/idle3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imageio_download_bin"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imageio_download_bin' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imageio_download_bin' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imageio_remove_bin"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imageio_remove_bin' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imageio_remove_bin' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/img2webp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/img2webp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imgcmp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imgcmp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imginfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/imginfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/infocmp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/infocmp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/infotocap"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tic'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ippeveprinter"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ippeveprinter'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipptool"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipptool'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipython"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipython' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipython' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipython3"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipython3' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ipython3' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/isympy"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/isympy' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/isympy' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jasper"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jasper'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jiv"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jiv'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jpegtran"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jpegtran'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jsonschema"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jsonschema' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jsonschema' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-migrate"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-migrate' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-migrate' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-troubleshoot"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-troubleshoot' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-troubleshoot' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-trust"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-trust' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/jupyter-trust' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/k5srvutil"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/k5srvutil' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/k5srvutil' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kadmin"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kadmin'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kdestroy"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kdestroy'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/keyctl"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/keyctl'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kinit"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kinit'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_browser"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_browser' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_browser' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_control"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_control' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_control' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_path"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_path' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_path' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_resource"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_resource' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_resource' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_sim"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_sim' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klampt_sim' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klist"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/klist'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kpasswd"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kpasswd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/krb5-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/krb5-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/krb5-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ksu"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ksu'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kswitch"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kswitch'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ktutil"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ktutil'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kvno"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/kvno'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lame"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lame'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lconvert"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lconvert'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapadd"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapmodify'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapcompare"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapcompare'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapdelete"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapdelete'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapexop"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapexop'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapmodify"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapmodify'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapmodrdn"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapmodrdn'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldappasswd"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldappasswd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapsearch"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapsearch'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapurl"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapurl'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapvc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapvc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapwhoami"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ldapwhoami'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libdeflate-gunzip"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libdeflate-gunzip'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libdeflate-gzip"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libdeflate-gzip'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libpng-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libpng16-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libpng16-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libpng16-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libpng16-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/libpng16-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/linguist"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/linguist'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lprodump"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lprodump'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lrelease"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lrelease'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lrelease-pro"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lrelease-pro'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lsm2bin"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lsm2bin' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lsm2bin' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lstopo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lstopo-no-graphics'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lstopo-no-graphics"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lstopo-no-graphics'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lupdate"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lupdate'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lupdate-pro"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lupdate-pro'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzcat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzcmp"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzdiff"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzegrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzfgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzless"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzless' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzless' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzma"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzmadec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzmadec'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzmainfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzmainfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/lzmore"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzmore' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzmore' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/makeconv"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/makeconv'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/markdown_py"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/markdown_py' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/markdown_py' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/meshdebug"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/meshdebug'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/metaflac"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/metaflac'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/moc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/moc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/mpg123"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/mpg123'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/mpg123-id3dump"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/mpg123-id3dump'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/mpg123-strip"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/mpg123-strip'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgattrib"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgattrib'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgcat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgcat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgcmp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgcmp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgcomm"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgcomm'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgconv"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgconv'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgen"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgen'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgexec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgexec'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgfilter"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgfilter'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgfmt"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgfmt'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msggrep"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msggrep'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msginit"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msginit'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgmerge"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgmerge'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgunfmt"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msgunfmt'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msguniq"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/msguniq'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ncursesw6-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ncursesw6-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ncursesw6-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ngettext"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ngettext'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nghttp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nghttp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nghttpd"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nghttpd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nghttpx"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nghttpx'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/normalizer"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/normalizer' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/normalizer' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nspr-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nspr-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nspr-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nss-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nss-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/nss-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/numpy-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/numpy-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/numpy-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/open3d"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/open3d' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/open3d' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_annotation"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_annotation'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_interactive-calibration"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_interactive-calibration'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_model_diagnostics"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_model_diagnostics'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_version"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_version'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_visualisation"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_visualisation'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_waldboost_detector"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/opencv_waldboost_detector'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/openssl"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/openssl'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/out123"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/out123'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pa-info"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pa-info' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pa-info' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pacat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pacat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pactl"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pactl'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/padsp"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/padsp' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/padsp' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pal2rgb"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pal2rgb'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pamon"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pacat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pango-list"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pango-list'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pango-segmentation"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pango-segmentation'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pango-view"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pango-view'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/paplay"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pacat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/parec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pacat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/parecord"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pacat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pax11publish"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pax11publish'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2grep"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2grep'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2test"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pcre2test'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pg_config"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pg_config'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip3"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip3' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip3' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip3.12"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pip3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pixeltool"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pixeltool'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pk12util"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pk12util'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pkgdata"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pkgdata'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/plotly"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/plotly' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/plotly' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/plotly_get_chrome"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/plotly_get_chrome' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/plotly_get_chrome' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/png-fix-itxt"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/png-fix-itxt'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pngfix"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pngfix'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ppm2tiff"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ppm2tiff'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/protoc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/protoc-28.2.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/protoc-28.2.0"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/protoc-28.2.0'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/proton"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/proton' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/proton' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/proton-viewer"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/proton-viewer' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/proton-viewer' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pybind11-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pybind11-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pybind11-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pydoc3.12' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyftmerge"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyftmerge' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyftmerge' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyftsubset"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyftsubset' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyftsubset' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pygmentize"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pygmentize' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pygmentize' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pygrun"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pygrun' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pygrun' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pylupdate5"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pylupdate5' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pylupdate5' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyrcc5"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyrcc5' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyrcc5' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-lupdate"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-lupdate' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-lupdate' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-rcc"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-rcc' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-rcc' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-uic"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-uic' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyside2-uic' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.1"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python3.12-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyuic5"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyuic5' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/pyuic5' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qcollectiongenerator"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qcollectiongenerator'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbus"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbus'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbuscpp2xml"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbuscpp2xml'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbusviewer"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbusviewer'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbusxml2cpp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdbusxml2cpp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdistancefieldgenerator"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdistancefieldgenerator'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdoc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qdoc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qgltf"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qgltf'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qhelpgenerator"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qhelpgenerator'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qlalr"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qlalr'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmake"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmake'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qml"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qml'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlcachegen"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlcachegen'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmleasing"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmleasing'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlformat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlformat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlimportscanner"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlimportscanner'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmllint"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmllint'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlmin"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlmin'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlplugindump"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlplugindump'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlpreview"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlpreview'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlprofiler"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlprofiler'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlscene"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmlscene'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmltestrunner"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmltestrunner'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmltime"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmltime'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmltyperegistrar"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qmltyperegistrar'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qscxmlc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qscxmlc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qt.conf"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qt.conf' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qt.conf' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtattributionsscanner"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtattributionsscanner'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtdiag"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtdiag'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtpaths"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtpaths'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtplugininfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qtplugininfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qvkgen"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qvkgen'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qwebengine_convert_dict"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/qwebengine_convert_dict'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/range-detector"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/range-detector' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/range-detector' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/raw2tiff"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/raw2tiff'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rcc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rcc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rdjpgcom"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rdjpgcom'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/recode-sr-latin"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/recode-sr-latin'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/renderer"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/renderer' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/renderer' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/repc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/repc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/reset"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tset'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rosversion"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rosversion' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rosversion' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html4"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html4' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html4' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html5"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html5' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2html5' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2latex"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2latex' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2latex' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2man"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2man' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2man' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2odt"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2odt' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2odt' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2pseudoxml"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2pseudoxml' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2pseudoxml' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2s5"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2s5' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2s5' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2xetex"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2xetex' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2xetex' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2xml"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2xml' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rst2xml' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rsvg-convert"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/rsvg-convert'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sclient"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sclient'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/setfattr"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/setfattr'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/setup_vars_opencv4.sh"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/setup_vars_opencv4.sh' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/setup_vars_opencv4.sh' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sim_client"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sim_client'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-build"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-build' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-build' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-distinfo"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-distinfo' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-distinfo' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-install"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-install' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-install' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-module"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-module' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-module' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-sdist"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-sdist' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-sdist' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-wheel"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-wheel' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sip-wheel' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-cmp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-cmp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-concat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-concat'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-convert"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-convert'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-deinterleave"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-deinterleave'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-info"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-info'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-interleave"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-interleave'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-metadata-get"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-metadata-get'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-metadata-set"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-metadata-set'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-play"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-play'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-salvage"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sndfile-salvage'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sqlite3"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sqlite3'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sqlite3_analyzer"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sqlite3_analyzer' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/sqlite3_analyzer' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/SvtAv1EncApp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/SvtAv1EncApp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/syncqt.pl"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/syncqt.pl' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/syncqt.pl' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tabs"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tabs'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tclsh"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tclsh8.6'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tclsh8.6"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tclsh8.6'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tensorboard"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tensorboard' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tensorboard' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tic"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tic'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2bw"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2bw'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2fsspec"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2fsspec' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2fsspec' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2pdf"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2pdf'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2ps"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2ps'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2rgba"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiff2rgba'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcmp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcmp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcomment"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcomment' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcomment' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcp"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcp'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcrop"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffcrop'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffdither"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffdither'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffdump"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffdump'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tifffile"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tifffile' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tifffile' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffinfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffinfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffmedian"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffmedian'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffset"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffset'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffsplit"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tiffsplit'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tjbench"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tjbench'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/toe"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/toe'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/torchfrtrace"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/torchfrtrace' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/torchfrtrace' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/torchrun"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/torchrun' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/torchrun' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tput"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tput'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tqdm"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tqdm' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tqdm' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tracegen"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tracegen'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/trimesh"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/trimesh' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/trimesh' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tset"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/tset'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ttx"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ttx' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/ttx' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/uic"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/uic'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/unlzma"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/unxz"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/unzstd"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/uuclient"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/uuclient'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/vpxdec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/vpxdec'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/vpxenc"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/vpxenc'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wandb"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wandb' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wandb' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wayland-scanner"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wayland-scanner'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wb"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wb' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wb' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/webpinfo"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/webpinfo'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/webpmux"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/webpmux'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wheel"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wheel' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wheel' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wish"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wish8.6'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wish8.6"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wish8.6'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wrjpgcom"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/wrjpgcom'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/x264"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/x264'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/x265"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/x265'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/x86_64-conda-linux-gnu-ld"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/x86_64-conda-linux-gnu-ld'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xgettext"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xgettext'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xkbcli"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xkbcli'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xml2-config"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xml2-config' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xml2-config' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlcatalog"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlcatalog'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmllint"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmllint'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlpatterns"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlpatterns'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlpatternsvalidator"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlpatternsvalidator'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlwf"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xmlwf'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzcat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xz'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzcmp"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdec"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdec'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzdiff' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzegrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzfgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzless"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzless' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzless' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzmore"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzmore' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/xzmore' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstd"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdcat"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdgrep"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdgrep' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdgrep' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdless"
+QElfParser: '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdless' is not an ELF object
+"'/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdless' is not an ELF object" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() looking at "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstdmt"
+"Failed to extract plugin meta data from '/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/zstd'" 
+         not a plugin
+QFactoryLoader::QFactoryLoader() checking directory path "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/lib/python3.12/site-packages/PyQt5/Qt5/plugins/platforms" ...
+QFactoryLoader::QFactoryLoader() checking directory path "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/platforms" ...
+qt.qpa.plugin: Could not find the Qt platform plugin "xcb" in "/home/user/ehsanullahm1/miniconda3/envs/manipulation_map/lib/python3.12/site-packages/PyQt5/Qt5/plugins"
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
