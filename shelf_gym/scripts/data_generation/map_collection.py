@@ -303,6 +303,7 @@ class MapCollection(ShelfEnv):
         semantic_3d_map = semantic_3d_map.argmax(axis = 3)
 
         #store data in dict
+        # TODO LOOK AT THIS INSTANCE MAP
         gt_data = {"voxel_height_map": hm3d, "voxel_semantic_map": semantic_3d_map,
                    "occupancy_height_map": final_mapped_data["occupancy_height_map"], "semantic_gt": semantic_2d_map,
                    "instance_maps": instance_maps}
