@@ -1,23 +1,29 @@
 # Belief Visualization Scripts
 
+**Location**: These scripts are in the `visualization_attempts/` directory.
+
 This directory contains scripts to visualize the robot's belief evolution during the Manipulation-Enhanced Mapping (MEM) pipeline, recreating visualizations similar to Figure 1 from the paper.
 
 ## Quick Start
+
+**Important**: Run commands from the repo root, accessing scripts in `visualization_attempts/`.
 
 ### Option 1: Simple Quick Visualization (Recommended for First Try)
 
 Run a quick 10-step visualization with minimal setup:
 
 ```bash
+cd visualization_attempts
 python quick_visualize.py
 ```
 
 With custom number of steps:
 ```bash
+cd visualization_attempts
 python quick_visualize.py --steps 20
 ```
 
-**Output**: Creates `./quick_viz/` directory with:
+**Output**: Creates `visualization_attempts/quick_viz/` directory with:
 - Individual frames for each step
 - Summary figure showing progression
 
@@ -29,20 +35,23 @@ This creates publication-quality visualizations similar to Figure 1 in the paper
 
 #### Basic usage (random scene):
 ```bash
+cd visualization_attempts
 python visualize_belief_figure1.py --steps 20
 ```
 
 #### With predefined scene:
 ```bash
+cd visualization_attempts
 python visualize_belief_figure1.py --scene-id 5 --steps 25
 ```
 
 #### With custom scene file:
 ```bash
+cd visualization_attempts
 python visualize_belief_figure1.py --scene /path/to/scene_data.p --steps 20
 ```
 
-**Output**: Creates `./belief_visualizations_TIMESTAMP/` directory with:
+**Output**: Creates `visualization_attempts/belief_visualizations_TIMESTAMP/` directory with:
 - `figure1_style_comparison.png` - Main Figure 1 style visualization
 - `extended_comparison.png` - Extended view with 5 timesteps
 - `frame_step_XXX.png` - Individual frames for each step

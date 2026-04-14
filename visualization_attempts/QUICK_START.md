@@ -2,9 +2,11 @@
 
 All plotting scripts are now working and have been fixed to use the non-interactive 'Agg' backend to avoid GUI issues.
 
+**Location**: These visualization scripts are in the `visualization_attempts/` directory.
+
 ## Generated Plots
 
-All generated plots are saved in the `plots/` directory. Here's what you can create:
+All generated plots are saved in the `visualization_attempts/plots/` directory. Here's what you can create:
 
 ### Basic Examples (`example_plotting.py`)
 - `camera_array_overview.png` - Overview of 6 camera views with height maps, semantic maps, and depth images
@@ -60,9 +62,13 @@ python3 plots.py --mode all_cameras --save
 ```python
 import matplotlib
 matplotlib.use('Agg')  # Always set this first!
+import os
+import sys
+sys.path.insert(0, 'visualization_attempts')
 from plots import MapDataVisualizer
 
-viz = MapDataVisualizer(data_dir="shelf_gym/data/map_data")
+# Path is automatically resolved relative to repo root
+viz = MapDataVisualizer()
 samples = viz.find_available_samples(job_id=0)
 
 # Load data
@@ -70,8 +76,8 @@ hms_data = viz.load_hms_data(samples[0])
 gt_data = viz.load_gt_data(samples[0])
 
 # Create plots (always provide save_path)
-viz.plot_camera_array_overview(hms_data, save_path='my_plot.png')
-viz.plot_ground_truth_overview(gt_data, save_path='my_gt_plot.png')
+viz.plot_camera_array_overview(hms_data, save_path='visualization_attempts/plots/my_plot.png')
+viz.plot_ground_truth_overview(gt_data, save_path='visualization_attempts/plots/my_gt_plot.png')
 ```
 
 ## Important Notes
@@ -80,6 +86,7 @@ viz.plot_ground_truth_overview(gt_data, save_path='my_gt_plot.png')
 2. **All plots are saved to files** - there is no interactive display
 3. **The `plots/` directory** is automatically created if it doesn't exist
 4. **Large datasets**: Use `max_cameras` parameter to limit the number of cameras plotted
+5. **Run from repo root**: Execute scripts from the main repository root or use absolute paths
 
 ## Data Structure
 

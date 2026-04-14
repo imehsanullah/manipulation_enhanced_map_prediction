@@ -1,6 +1,10 @@
 #!/bin/bash
 # Convenience script to run belief visualizations
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+
 echo "=========================================="
 echo "  Belief Visualization Runner"
 echo "=========================================="
@@ -65,6 +69,9 @@ if [ -n "$SCENE_ID" ]; then
 fi
 echo ""
 
+# Change to script directory for proper Python imports
+cd "$SCRIPT_DIR"
+
 # Run the appropriate script
 if [ "$MODE" = "quick" ]; then
     echo "Running quick visualization..."
@@ -73,8 +80,8 @@ if [ "$MODE" = "quick" ]; then
     EXIT_CODE=$?
     if [ $EXIT_CODE -eq 0 ]; then
         echo ""
-        echo "✓ Success! View results in ./quick_viz/"
-        echo "  Main output: ./quick_viz/summary.png"
+        echo "✓ Success! View results in $SCRIPT_DIR/quick_viz/"
+        echo "  Main output: $SCRIPT_DIR/quick_viz/summary.png"
     fi
 
 elif [ "$MODE" = "full" ]; then
@@ -93,13 +100,13 @@ elif [ "$MODE" = "full" ]; then
         # Find the most recent output directory
         OUTPUT_DIR=$(ls -td belief_visualizations_* | head -1)
         echo ""
-        echo "✓ Success! View results in ./$OUTPUT_DIR/"
+        echo "✓ Success! View results in $SCRIPT_DIR/$OUTPUT_DIR/"
         echo "  Main outputs:"
-        echo "    - ./$OUTPUT_DIR/figure1_style_comparison.png"
-        echo "    - ./$OUTPUT_DIR/extended_comparison.png"
+        echo "    - $SCRIPT_DIR/$OUTPUT_DIR/figure1_style_comparison.png"
+        echo "    - $SCRIPT_DIR/$OUTPUT_DIR/extended_comparison.png"
         echo ""
         echo "To create a video:"
-        echo "  cd $OUTPUT_DIR"
+        echo "  cd $SCRIPT_DIR/$OUTPUT_DIR"
         echo "  ffmpeg -framerate 2 -pattern_type glob -i 'frame_*.png' \\"
         echo "         -c:v libx264 -pix_fmt yuv420p belief_evolution.mp4"
     fi

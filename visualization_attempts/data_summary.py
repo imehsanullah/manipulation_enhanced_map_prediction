@@ -3,21 +3,31 @@
 Utility script to summarize available map data.
 """
 
-from plots import MapDataVisualizer
+import os
+import sys
 from pathlib import Path
 import numpy as np
+
+# Add current directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from plots import MapDataVisualizer
 
 
 def summarize_data():
     """Print a summary of all available map data."""
-    viz = MapDataVisualizer(data_dir="shelf_gym/data/map_data")
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(script_dir)
+    data_dir_path = os.path.join(repo_root, "shelf_gym/data/map_data")
+    
+    viz = MapDataVisualizer(data_dir=data_dir_path)
 
     print("=" * 70)
     print("MAP DATA SUMMARY")
     print("=" * 70)
 
     # Find all job directories
-    data_dir = Path("shelf_gym/data/map_data")
+    data_dir = Path(data_dir_path)
     if not data_dir.exists():
         print(f"\nError: Directory {data_dir} does not exist!")
         return

@@ -17,8 +17,14 @@ from datetime import datetime
 
 
 class BeliefVisualizer:
-    def __init__(self, mem, output_dir='./belief_visualizations'):
+    def __init__(self, mem, output_dir=None):
         self.mem = mem
+        # Get script directory for output paths
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        if output_dir is None:
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_dir = os.path.join(script_dir, f'belief_visualizations_{timestamp}')
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
 
@@ -224,9 +230,8 @@ class BeliefVisualizer:
 def run_with_visualization(predefined_scene_dir=None, max_steps=20):
     """Run the pipeline with belief visualization"""
 
-    # Create output directory with timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_dir = f'./belief_visualizations_{timestamp}'
+    # Output directory will be created by BeliefVisualizer
+    output_dir = None
 
     print(f"Initializing Manipulation Enhanced Mapping...")
     mem = ManipulationEnhancedMapping(
@@ -236,8 +241,9 @@ def run_with_visualization(predefined_scene_dir=None, max_steps=20):
     )
     mem.reset_env()
 
-    # Initialize visualizer
-    visualizer = BeliefVisualizer(mem, output_dir)
+    # Initialize visualizer (creates output_dir automatically)
+    visualizer = BeliefVisualizer(mem)
+    output_dir = visualizer.output_dir
 
     print("Starting run with visualization...")
 

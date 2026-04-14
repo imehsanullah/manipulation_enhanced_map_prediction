@@ -541,7 +541,8 @@ class MapCollection(ShelfEnv):
             np.savez_compressed(f3, gt_hms=gt_data["occupancy_height_map"],
                                 hm3d=gt_data["voxel_height_map"],
                                 semantic_2d = gt_data["semantic_gt"],
-                                semantic_3d = gt_data["voxel_semantic_map"])
+                                semantic_3d = gt_data["voxel_semantic_map"],
+                                instance_maps=gt_data["instance_maps"])
 
         return gt_data, cam_array_data
 

@@ -17,13 +17,14 @@ import os
 def quick_visualize(n_steps=10):
     """Quick visualization with minimal setup"""
 
+    # Get script directory for output paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, 'quick_viz')
+    os.makedirs(output_dir, exist_ok=True)
+
     print("Initializing...")
     mem = ManipulationEnhancedMapping(render=False, show_vis=False)
     mem.reset_env()
-
-    # Create output directory
-    output_dir = './quick_viz'
-    os.makedirs(output_dir, exist_ok=True)
 
     # Get initial data
     print("Getting initial observation...")
@@ -114,6 +115,8 @@ def quick_visualize(n_steps=10):
     print(f"\nDone! Visualizations saved to: {output_dir}/")
     print(f"  - Individual frames: step_00.png to step_{n_steps-1:02d}.png")
     print(f"  - Summary: summary.png")
+    print(f"\nTo view results:")
+    print(f"  Open: {os.path.join(output_dir, 'summary.png')}")
 
     return output_dir
 
@@ -128,6 +131,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     output_dir = quick_visualize(n_steps=args.steps)
-
-    print(f"\nTo view results:")
-    print(f"  Open: {output_dir}/summary.png")

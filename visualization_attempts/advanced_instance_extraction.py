@@ -566,7 +566,9 @@ def run_comparison():
     print("GENERATING VISUALIZATIONS")
     print("="*80)
 
-    output_dir = './advanced_instance_comparison'
+    # Get script directory for output paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, 'advanced_instance_comparison')
     os.makedirs(output_dir, exist_ok=True)
 
     # Main comparison

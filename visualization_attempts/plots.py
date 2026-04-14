@@ -385,9 +385,13 @@ class MapDataVisualizer:
 
 def main():
     """Main function with command-line interface."""
+    # Get script directory for relative paths
+    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+    repo_root = script_dir.parent
+    
     parser = argparse.ArgumentParser(description='Visualize map data from .npz files')
-    parser.add_argument('--data_dir', type=str, default='shelf_gym/data/map_data',
-                       help='Path to map_data directory')
+    parser.add_argument('--data_dir', type=str, default=None,
+                       help='Path to map_data directory (default: shelf_gym/data/map_data from repo root)')
     parser.add_argument('--job_id', type=int, default=0,
                        help='Job ID to visualize')
     parser.add_argument('--sample_id', type=str, default=None,
@@ -402,8 +406,14 @@ def main():
 
     args = parser.parse_args()
 
+    # Set data directory
+    if args.data_dir:
+        data_dir = args.data_dir
+    else:
+        data_dir = repo_root / "shelf_gym/data/map_data"
+
     # Initialize visualizer
-    viz = MapDataVisualizer(args.data_dir)
+    viz = MapDataVisualizer(str(data_dir))
 
     # Find samples
     samples = viz.find_available_samples(args.job_id)
@@ -424,27 +434,27 @@ def main():
     # Generate plots based on mode
     save_path = None
     if args.save:
-        save_dir = Path('plots')
+        save_dir = script_dir / 'plots'
         save_dir.mkdir(exist_ok=True)
 
     if args.mode == 'overview':
         hms_data = viz.load_hms_data(sample_dir)
-        save_path = f'plots/overview_{sample_dir.name}.png' if args.save else None
-        viz.plot_camera_array_overview(hms_data, save_path=save_path)
+        save_path = save_dir / f'overview_{sample_dir.name}.png' if args.save else None
+        viz.plot_camera_array_overview(hms_data, save_path=str(save_path))
 
     elif args.mode == 'ground_truth':
         gt_data = viz.load_gt_data(sample_dir)
-        save_path = f'plots/ground_truth_{sample_dir.name}.png' if args.save else None
-        viz.plot_ground_truth_overview(gt_data, save_path=save_path)
+        save_path = save_dir / f'ground_truth_{sample_dir.name}.png' if args.save else None
+        viz.plot_ground_truth_overview(gt_data, save_path=str(save_path))
 
     elif args.mode == 'comparison':
-        save_path = f'plots/comparison_{sample_dir.name}.png' if args.save else None
-        viz.plot_comparison(sample_dir, args.camera_idx, save_path=save_path)
+        save_path = save_dir / f'comparison_{sample_dir.name}.png' if args.save else None
+        viz.plot_comparison(sample_dir, args.camera_idx, save_path=str(save_path))
 
     elif args.mode == 'all_cameras':
         hms_data = viz.load_hms_data(sample_dir)
-        save_path = f'plots/all_cameras_{sample_dir.name}.png' if args.save else None
-        viz.plot_all_cameras_grid(hms_data, save_path=save_path)
+        save_path = save_dir / f'all_cameras_{sample_dir.name}.png' if args.save else None
+        viz.plot_all_cameras_grid(hms_data, save_path=str(save_path))
 
 
 if __name__ == '__main__':

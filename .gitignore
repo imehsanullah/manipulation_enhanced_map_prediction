@@ -12,3 +12,4 @@ wandb
 *.npz
 *.npy
 *.json
+.vscode/

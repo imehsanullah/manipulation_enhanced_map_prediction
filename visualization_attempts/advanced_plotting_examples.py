@@ -8,7 +8,19 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import sys
+
+# Add current directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from plots import MapDataVisualizer
+
+# Get the directory where this script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+repo_root = os.path.dirname(script_dir)
+data_dir_path = os.path.join(repo_root, "shelf_gym/data/map_data")
+plots_dir = os.path.join(script_dir, 'plots')
+os.makedirs(plots_dir, exist_ok=True)
 
 
 def example_1_analyze_height_distribution():
@@ -17,7 +29,7 @@ def example_1_analyze_height_distribution():
     print("Example 1: Height Distribution Analysis")
     print("="*70)
 
-    viz = MapDataVisualizer()
+    viz = MapDataVisualizer(data_dir=data_dir_path)
     samples = viz.find_available_samples(0)
     sample_dir = samples[0]
 
@@ -36,8 +48,8 @@ def example_1_analyze_height_distribution():
     plt.title(f'Height Distribution - Sample {sample_dir.name}')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig('plots/height_distribution.png', dpi=150)
-    print(f"Saved: plots/height_distribution.png")
+    plt.savefig(os.path.join(plots_dir, 'height_distribution.png'), dpi=150)
+    print(f"Saved: {os.path.join(plots_dir, 'height_distribution.png')}")
     plt.close()
 
     # Print statistics
@@ -75,8 +87,8 @@ def example_2_semantic_class_distribution():
     plt.xticks(unique)
     plt.grid(True, alpha=0.3, axis='y')
     plt.tight_layout()
-    plt.savefig('plots/semantic_distribution.png', dpi=150)
-    print(f"Saved: plots/semantic_distribution.png")
+    plt.savefig(os.path.join(plots_dir, 'semantic_distribution.png'), dpi=150)
+    print(f"Saved: {os.path.join(plots_dir, 'semantic_distribution.png')}")
     plt.close()
 
     # Print class statistics
@@ -117,8 +129,8 @@ def example_3_compare_multiple_cameras():
     plt.suptitle(f'Multi-Camera Height Map Comparison - Sample {sample_dir.name}',
                 fontsize=14)
     plt.tight_layout()
-    plt.savefig('plots/multi_camera_comparison.png', dpi=150)
-    print(f"Saved: plots/multi_camera_comparison.png")
+    plt.savefig(os.path.join(plots_dir, 'multi_camera_comparison.png'), dpi=150)
+    print(f"Saved: {os.path.join(plots_dir, 'multi_camera_comparison.png')}")
     plt.close()
 
 
@@ -149,8 +161,8 @@ def example_4_3d_voxel_analysis():
     plt.title(f'Occupancy vs Height - Sample {sample_dir.name}')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig('plots/occupancy_vs_height.png', dpi=150)
-    print(f"Saved: plots/occupancy_vs_height.png")
+    plt.savefig(os.path.join(plots_dir, 'occupancy_vs_height.png'), dpi=150)
+    print(f"Saved: {os.path.join(plots_dir, 'occupancy_vs_height.png')}")
     plt.close()
 
     # Find peak occupancy height
@@ -193,8 +205,8 @@ def example_5_depth_statistics():
     plt.title(f'Mean Depth per Camera - Sample {sample_dir.name}')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig('plots/depth_per_camera.png', dpi=150)
-    print(f"Saved: plots/depth_per_camera.png")
+    plt.savefig(os.path.join(plots_dir, 'depth_per_camera.png'), dpi=150)
+    print(f"Saved: {os.path.join(plots_dir, 'depth_per_camera.png')}")
     plt.close()
 
     print(f"\nDepth Statistics Across All Cameras:")
@@ -250,18 +262,15 @@ def example_6_cross_sections():
 
     plt.suptitle(f'3D Voxel Cross-Sections - Sample {sample_dir.name}', fontsize=14)
     plt.tight_layout()
-    plt.savefig('plots/cross_sections.png', dpi=150)
-    print(f"Saved: plots/cross_sections.png")
+    plt.savefig(os.path.join(plots_dir, 'cross_sections.png'), dpi=150)
+    print(f"Saved: {os.path.join(plots_dir, 'cross_sections.png')}")
     plt.close()
 
 
 def main():
     """Run all examples."""
-    import os
-    os.makedirs('plots', exist_ok=True)
-
     print("\nRunning advanced plotting examples...")
-    print("All plots will be saved to the 'plots/' directory.\n")
+    print(f"All plots will be saved to the '{plots_dir}/' directory.\n")
 
     example_1_analyze_height_distribution()
     example_2_semantic_class_distribution()

@@ -233,8 +233,9 @@ def demonstrate_instance_extraction():
 
     extractor = InstanceExtractor(mem)
 
-    # Extract with different thresholds
-    output_dir = './instance_extraction'
+    # Get script directory for output paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, 'instance_extraction')
     os.makedirs(output_dir, exist_ok=True)
 
     for conf_thresh in [0.2, 0.5, 0.8]:
