@@ -39,12 +39,14 @@ visualization_attempts/
 Visualizes pre-existing map data from `.npz` files (height maps, semantic maps, depth images, ground truth).
 
 **Scripts**:
+
 - `plots.py` - Core visualization library
 - `example_plotting.py` - Basic examples
 - `advanced_plotting_examples.py` - Advanced analysis
 - `data_summary.py` - Data statistics
 
 **Usage**:
+
 ```bash
 cd visualization_attempts
 python3 example_plotting.py
@@ -61,6 +63,7 @@ python3 data_summary.py
 Visualizes the robot's belief evolution during the MEM (Manipulation-Enhanced Mapping) pipeline.
 
 **Scripts**:
+
 - `belief_visualizer.py` - Standalone plotting library
 - `quick_visualize.py` - Fast testing (10 steps, ~2-5 min)
 - `visualize_belief_figure1.py` - Full Figure 1 recreation (20 steps, ~5-15 min)
@@ -69,6 +72,7 @@ Visualizes the robot's belief evolution during the MEM (Manipulation-Enhanced Ma
 - `advanced_instance_extraction.py` - Advanced instance methods (6 methods)
 
 **Usage**:
+
 ```bash
 cd visualization_attempts
 
@@ -83,6 +87,7 @@ cd visualization_attempts
 ```
 
 **Output**: 
+
 - `visualization_attempts/quick_viz/` (quick mode)
 - `visualization_attempts/belief_visualizations_*/` (full mode)
 - `visualization_attempts/instance_extraction/`
@@ -118,6 +123,7 @@ The scripts automatically resolve paths relative to the repository root.
 ## Troubleshooting
 
 ### "No module named 'shelf_gym'"
+
 ```bash
 cd /home/user/ehsanullahm1/thesis/manipulation_enhanced_map_prediction
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
@@ -126,10 +132,13 @@ python3 example_plotting.py
 ```
 
 ### "FileNotFoundError: shelf_gym/data/map_data"
+
 Make sure you're running from the repo root or have the data directory in the expected location.
 
 ### "CUDA out of memory"
+
 Use fewer steps or smaller scenes:
+
 ```bash
 ./run_visualization.sh --quick --steps 5
 ```
@@ -140,3 +149,4 @@ Use fewer steps or smaller scenes:
 - **VISUALIZATION_QUICKSTART.md** - Belief visualization quick start
 - **VISUALIZATION_README.md** - Full belief visualization documentation
 - **PLOTTING_README.md** - Original plotting documentation
+

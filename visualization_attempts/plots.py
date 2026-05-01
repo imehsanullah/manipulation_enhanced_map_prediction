@@ -92,7 +92,8 @@ class MapDataVisualizer:
             'gt_hms': data['gt_hms'],  # (2, 140, 200) - ground truth occupancy and height
             'hm3d': data['hm3d'],  # (140, 200, 102) - 3D voxel height map
             'semantic_2d': data['semantic_2d'],  # (140, 200) - 2D semantic map
-            'semantic_3d': data['semantic_3d']  # (140, 200, 102) - 3D semantic voxel map
+            'semantic_3d': data['semantic_3d'],  # (140, 200, 102) - 3D semantic voxel map
+            'instance_maps': data['instance_maps']  # (12, 140, 200) - instance maps from 12 viewpoints
         }
 
     def plot_single_heightmap(self, hm: np.ndarray, camera_idx: int,
@@ -294,6 +295,160 @@ class MapDataVisualizer:
         else:
             plt.close(fig)
 
+    def analyze_viewpoints(self, gt_data: dict) -> dict:
+        """
+        Analyze which viewpoint reveals the most instances.
+
+        Args:
+            gt_data: Dictionary from load_gt_data() containing instance_maps
+
+        Returns:
+            Dictionary with analysis results
+        """
+        instance_maps = gt_data['instance_maps']
+        n_views = len(instance_maps)
+        
+        analysis = {
+            'viewpoint_idx': [],
+            'num_instances': [],
+            'num_pixels_visible': [],
+            'coverage_percentage': []
+        }
+        
+        total_pixels = instance_maps[0].size
+        
+        for i in range(n_views):
+            inst_map = instance_maps[i]
+            
+            # Count unique instances (excluding -1 which is background)
+            unique_instances = np.unique(inst_map[inst_map != -1])
+            num_instances = len(unique_instances)
+            
+            # Count total pixels with visible instances
+            pixels_visible = np.sum(inst_map != -1)
+            coverage_pct = (pixels_visible / total_pixels) * 100
+            
+            analysis['viewpoint_idx'].append(i)
+            analysis['num_instances'].append(num_instances)
+            analysis['num_pixels_visible'].append(pixels_visible)
+            analysis['coverage_percentage'].append(coverage_pct)
+        
+        # Find best viewpoint
+        best_idx = np.argmax(analysis['num_instances'])
+        analysis['best_viewpoint'] = {
+            'index': best_idx,
+            'viewpoint_number': best_idx + 1,
+            'num_instances': analysis['num_instances'][best_idx],
+            'pixels_visible': analysis['num_pixels_visible'][best_idx],
+            'coverage_percentage': analysis['coverage_percentage'][best_idx]
+        }
+        
+        # Rank all viewpoints
+        rankings = sorted(range(n_views), key=lambda i: analysis['num_instances'][i], reverse=True)
+        analysis['rankings'] = rankings
+        
+        return analysis
+
+    def plot_instance_maps(self, gt_data: dict, save_path: Optional[str] = None, show: bool = False):
+        """
+        Plot ground truth instance maps from multiple viewpoints with analysis.
+
+        Args:
+            gt_data: Dictionary from load_gt_data() containing instance_maps
+            save_path: Path to save the figure
+            show: Whether to display the plot (only works with interactive backend)
+        """
+        instance_maps = gt_data['instance_maps']
+        
+        # Analyze viewpoints
+        analysis = self.analyze_viewpoints(gt_data)
+        
+        # instance_maps is a list/array of viewpoint maps
+        n_views = len(instance_maps)
+        n_cols = 3
+        n_rows = int(np.ceil(n_views / n_cols)) + 1  # Extra row for summary
+        
+        fig = plt.figure(figsize=(20, 6 * n_rows))
+        gs = GridSpec(n_rows, n_cols, figure=fig, hspace=0.3, wspace=0.3)
+        
+        # Use a categorical colormap for instance IDs
+        cmap = plt.get_cmap('tab20')
+        
+        # Plot each viewpoint
+        for i in range(n_views):
+            row = i // n_cols
+            col = i % n_cols
+            ax = fig.add_subplot(gs[row, col])
+            
+            inst_map = instance_maps[i]
+            
+            # Display instance map
+            im = ax.imshow(inst_map, cmap=cmap, interpolation='nearest', origin='upper')
+            
+            # Add ranking badge
+            rank = analysis['rankings'].index(i) + 1
+            badge_color = 'gold' if rank == 1 else 'silver' if rank == 2 else 'coral' if rank == 3 else 'lightgray'
+            ax.text(0.98, 0.98, f'#{rank}', transform=ax.transAxes, fontsize=16,
+                   fontweight='bold', ha='right', va='top',
+                   bbox=dict(boxstyle='round,pad=0.3', facecolor=badge_color, edgecolor='black'))
+            
+            ax.set_title(f'Viewpoint {i+1}\nInstances: {analysis["num_instances"][i]}\n'
+                        f'Coverage: {analysis["coverage_percentage"][i]:.1f}%', 
+                        fontsize=10)
+            ax.set_xlabel('X (pixels)')
+            ax.set_ylabel('Y (pixels)')
+            ax.axis('off')
+            
+            # Add colorbar
+            plt.colorbar(im, ax=ax, label='Instance ID')
+        
+        # Summary plot in the remaining space
+        ax_summary = fig.add_subplot(gs[-1, :])
+        
+        # Bar chart of instances per viewpoint
+        colors = ['gold', 'silver', 'coral'] + ['lightblue'] * (n_views - 3)
+        bars = ax_summary.bar(range(1, n_views + 1), analysis['num_instances'], 
+                             color=colors[:n_views], edgecolor='black', linewidth=1.5)
+        
+        ax_summary.set_xlabel('Viewpoint Number', fontsize=12)
+        ax_summary.set_ylabel('Number of Instances Visible', fontsize=12)
+        ax_summary.set_title('Viewpoint Comparison: Which View Reveals Most Objects?', fontsize=14)
+        ax_summary.set_xticks(range(1, n_views + 1))
+        
+        # Add value labels on bars
+        for i, (bar, instances, coverage) in enumerate(zip(bars, analysis['num_instances'], 
+                                                            analysis['coverage_percentage'])):
+            height = bar.get_height()
+            ax_summary.annotate(f'{instances}\n({coverage:.1f}%)',
+                               xy=(bar.get_x() + bar.get_width() / 2, height),
+                               xytext=(0, 3), textcoords="offset points",
+                               ha='center', va='bottom', fontsize=9)
+        
+        # Highlight best viewpoint
+        best = analysis['best_viewpoint']
+        ax_summary.axvline(best['viewpoint_number'], color='red', linestyle='--', 
+                          linewidth=2, alpha=0.7, label=f'Best: VP {best["viewpoint_number"]}')
+        ax_summary.legend()
+        
+        plt.suptitle(f'Ground Truth Instance Maps Analysis - {n_views} Viewpoints', 
+                    fontsize=16, y=0.995)
+        
+        if save_path:
+            plt.savefig(save_path, dpi=150, bbox_inches='tight')
+            print(f"Saved to {save_path}")
+            print(f"\nBest Viewpoint: #{best['viewpoint_number']}")
+            print(f"  - Instances visible: {best['num_instances']}")
+            print(f"  - Pixels visible: {best['pixels_visible']}")
+            print(f"  - Coverage: {best['coverage_percentage']:.1f}%")
+            print(f"\nRankings:")
+            for rank, idx in enumerate(analysis['rankings'][:min(6, n_views)], 1):
+                print(f"  {rank}. Viewpoint {idx+1}: {analysis['num_instances'][idx]} instances")
+        
+        if show:
+            plt.show()
+        else:
+            plt.close(fig)
+
     def plot_comparison(self, sample_dir: Path, camera_idx: int = 0,
                        save_path: Optional[str] = None, show: bool = False):
         """
@@ -397,7 +552,7 @@ def main():
     parser.add_argument('--sample_id', type=str, default=None,
                        help='Specific sample ID to visualize (e.g., "000000008")')
     parser.add_argument('--mode', type=str, default='overview',
-                       choices=['overview', 'ground_truth', 'comparison', 'all_cameras'],
+                       choices=['overview', 'ground_truth', 'comparison', 'all_cameras', 'instance_maps'],
                        help='Visualization mode')
     parser.add_argument('--camera_idx', type=int, default=0,
                        help='Camera index for comparison mode')
@@ -455,6 +610,11 @@ def main():
         hms_data = viz.load_hms_data(sample_dir)
         save_path = save_dir / f'all_cameras_{sample_dir.name}.png' if args.save else None
         viz.plot_all_cameras_grid(hms_data, save_path=str(save_path))
+
+    elif args.mode == 'instance_maps':
+        gt_data = viz.load_gt_data(sample_dir)
+        save_path = save_dir / f'instance_maps_{sample_dir.name}.png' if args.save else None
+        viz.plot_instance_maps(gt_data, save_path=str(save_path))
 
 
 if __name__ == '__main__':
