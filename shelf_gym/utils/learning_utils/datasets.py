@@ -27,9 +27,10 @@ class MapDataset(Dataset):
         self.gt_hm_files = sorted(glob(self.dataset_location + '/**/gt_hms.npz',recursive = True))
         self.max_samples = max_samples
         self.rng = np.random.default_rng()
-        self.mapper = Mapping(height = 120)
+        dummy_data = {"height_map": np.zeros((120, 200))}
+        self.mapper = Mapping(dummy_data, raw_hm_start=True)
         self.height_bins = cp.asnumpy(self.mapper.height_bins.copy())
-        self.height_grid = cp.asnumpy(self.mapper.height_grid.numpy().copy())
+        self.height_grid = cp.asnumpy(self.mapper.torch_height_grid.cpu().numpy().copy())
         self.height_resolution = cp.asnumpy(self.mapper.height_resolution)
     def __len__(self):
         return len(self.hm_files)-1
@@ -278,8 +279,10 @@ class MapDatasetH5py(Dataset):
     def get_all_free_and_occupied(self,sampled_depths, sampled_viewpoints, sampled_cameras=None):
         frees = []
         occupieds = []
+        if sampled_cameras is None:
+            sampled_cameras = [None] * len(sampled_depths)
         for depth, viewpoint, camera in zip(sampled_depths,sampled_viewpoints,sampled_cameras):
-            if sampled_cameras is None:
+            if camera is None:
                 intrinsic = self.intrinsics[viewpoint]
                 extrinsic = self.extrinsics[viewpoint]
             else:
@@ -351,6 +354,7 @@ class MapDatasetH5py(Dataset):
 
 class PushDatasetH5pyNPY(MapDatasetH5py):
     def __init__(self,dataset_location,max_samples = 10,n_classes = 15,noise = True,move_and_rotate = True,camera_params_dir = '../../camera_matrices.npz'):
+        self.use_continous_cameras = False
         self.dataset_location = dataset_location
         self.f = h5py.File(self.dataset_location,'r',locking = False,swmr = True)
         self.all_hms = self.f['hms']
@@ -365,9 +369,10 @@ class PushDatasetH5pyNPY(MapDatasetH5py):
         del self.all_hms
         self.max_samples = max_samples
         self.rng = np.random.default_rng()
-        self.mapper = Mapping(height = 120)
+        dummy_data = {"height_map": np.zeros((120, 200))}
+        self.mapper = Mapping(dummy_data, raw_hm_start=True)
         self.height_bins = cp.asnumpy(self.mapper.height_bins.copy())
-        self.height_grid = cp.asnumpy(self.mapper.height_grid.numpy().copy())
+        self.height_grid = cp.asnumpy(self.mapper.torch_height_grid.cpu().numpy().copy())
         self.height_resolution = cp.asnumpy(self.mapper.height_resolution)
         self.n_classes = n_classes
         self.noise = noise

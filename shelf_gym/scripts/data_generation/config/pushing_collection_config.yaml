@@ -7,5 +7,5 @@ max_dataset_size: 1000
 max_obj_num: 25
 max_occupancy_threshold: 0.4
 use_occupancy_for_placing: True
-use_ycb: False
+use_ycb: True
 show_vis: False

@@ -94,13 +94,13 @@ class PushSampler:
                                                               imagined=True, verbose=False)
 
         # Calculate push parametrization in form of Swept volume
-        sv = np.moveaxis(env.smg.get_swept_map(mps[::2])[10:-10], [2, 0, 1], [0, 1, 2])
+        sv = np.moveaxis(env.smg.get_swept_map(mps[::2]), [2, 0, 1], [0, 1, 2])
 
         if execute:
             success, mp = execute_push(env, push_data['paths'][0], path_annotations=push_data['path_annotations'][0])
             print(f'Pushing success: {not bool(success)}')
 
-        return sv, mps
+        return sv, motion_parametrization[0]
 
 
 

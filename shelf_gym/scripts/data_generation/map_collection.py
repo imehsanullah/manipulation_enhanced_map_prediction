@@ -532,6 +532,7 @@ class MapCollection(ShelfEnv):
         with open(hm_file,'wb') as f:
             np.savez_compressed(f, hms=cam_array_data["height_maps"], dilated_hms=cam_array_data["dilated_maps"],
                                 semantic_hms=cam_array_data["semantic_maps"], semantics=cam_array_data["semantics"],
+                                instance_maps=cam_array_data["instance_maps"],
                                 depths = cam_array_data["depth_maps"])
 
         with open(camera_matrices_file,'wb') as f2:
@@ -623,4 +624,3 @@ if __name__ == '__main__':
         Parallel(n_jobs=n_jobs, backend='multiprocessing')(delayed(run)(parallel, config_data, i) for i in range(n_jobs))
     else:
         run(parallel, config_data, 0)
-

@@ -59,7 +59,7 @@ def run_env(environment):
         iterations = environment.get_iterations()
 
 
-def parse_config(file_name="map_collection_config.yaml"):
+def parse_config(file_name="pushing_collection_config.yaml"):
     with open("config/"+file_name, "r") as file:
         config_data = yaml.safe_load(file)
     return config_data
