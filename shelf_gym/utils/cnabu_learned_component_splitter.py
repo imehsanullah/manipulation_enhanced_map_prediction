@@ -36,9 +36,10 @@ from shelf_gym.utils.cnabu_scene_graph import (
 
 
 THESIS_ROOT = Path("/home/user/ehsanullahm1/thesis")
-DEFAULT_D3G_TOOLS_DIR = THESIS_ROOT / "D3G" / "tools"
+DEFAULT_D3G_TOOLS_DIR = THESIS_ROOT / "scene_graph_related_research_papers" / "D3G" / "tools"
 DEFAULT_CHECKPOINT_PATH = (
     THESIS_ROOT
+    / "scene_graph_related_research_papers"
     / "D3G"
     / "checkpoints"
     / "mem_cnabu_component_splitter_full1000_20260701_234841"
