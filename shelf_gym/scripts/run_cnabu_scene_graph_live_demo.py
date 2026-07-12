@@ -27,12 +27,12 @@ import numpy as np
 import torch
 
 from shelf_gym.scripts.run_cnabu_pipeline import ManipulationEnhancedMapping
-from shelf_gym.utils.cnabu_learned_component_splitter import (
+from scene_graph_mem.runtime.cnabu_learned_component_splitter import (
     DEFAULT_CHECKPOINT_PATH,
     LearnedCnabuComponentSplitter,
 )
-from shelf_gym.utils.cnabu_scene_graph import predict_scene_graph_from_cnabu
-from shelf_gym.utils.cnabu_scene_graph_viz import (
+from scene_graph_mem.runtime.cnabu_scene_graph import predict_scene_graph_from_cnabu
+from scene_graph_mem.runtime.cnabu_scene_graph_viz import (
     DEFAULT_CLASS_PALETTE_BGR,
     build_cnabu_map_context,
     render_cnabu_belief_map_view,
