@@ -4,7 +4,9 @@
 This script is a reusable MEM-side runtime entrypoint. It starts the MEM
 PyBullet environment, performs one or more CNABU observation updates, generates
 a scene graph from the live CNABU belief tensors after each update, and can
-optionally update an OpenCV graph window and save lightweight diagnostics.
+optionally update a map-anchored OpenCV graph dashboard and save lightweight
+diagnostics. The live default follows the validated primary method: frozen
+learned component splitting with deterministic geometric relation edges.
 
 It does not train, export datasets, write checkpoints, or use GT/simulator
 instance labels as graph input.
@@ -34,9 +36,10 @@ from scene_graph_mem.runtime.cnabu_learned_component_splitter import (
 from scene_graph_mem.runtime.cnabu_scene_graph import predict_scene_graph_from_cnabu
 from scene_graph_mem.runtime.cnabu_scene_graph_viz import (
     DEFAULT_CLASS_PALETTE_BGR,
+    SceneGraphDisplayTracker,
     build_cnabu_map_context,
     render_cnabu_belief_map_view,
-    render_cnabu_scene_graph_view,
+    render_cnabu_scene_graph_dashboard,
 )
 from shelf_gym.utils.model_evaluation_utils import get_igs_for_map, get_subsequent_igs_for_map
 from shelf_gym.utils.pushing_utils import execute_push
@@ -46,6 +49,10 @@ THESIS_ROOT = Path("/home/user/ehsanullahm1/thesis")
 DEFAULT_DIAGNOSTICS_PARENT = THESIS_ROOT / "thesis_records" / "diagnostics"
 RAW_SHAPE_HW = (140, 200)
 CROP_ROWS = (10, 130)
+# The physical shelf spans approximately x=20..180 and y=40..118 in the
+# 5 mm MEM grid. Eight pixels of fixed safety context keep borders and pushed
+# objects visible without showing the much larger robot workspace.
+DEFAULT_SHELF_VIEW_XYXY = (12, 32, 188, 126)
 MODE_CONFIGS = {
     "split_off": {"enabled": False},
     "split_on_2d_candidate": {"enabled": True, "method": "candidate_gated_2d_footprint"},
@@ -182,6 +189,8 @@ def render_graph_image(
     graph: Mapping[str, Any],
     inputs: Mapping[str, Any],
     update_index: int,
+    display_state: Mapping[str, Any],
+    full_workspace_view: bool,
 ) -> np.ndarray:
     context = build_cnabu_map_context(
         occupancy_distribution=inputs.get("occupancy_distribution"),
@@ -189,14 +198,15 @@ def render_graph_image(
         raw_shape_hw=inputs.get("raw_shape_hw"),
         crop_rows=inputs.get("crop_rows"),
     )
-    return render_cnabu_scene_graph_view(
+    return render_cnabu_scene_graph_dashboard(
         graph,
         context=context,
         update_index=int(update_index),
-        width=640,
-        height=520,
+        width=1280,
+        height=760,
         max_edges=36,
-        max_labels=24,
+        display_state=display_state,
+        view_xyxy=None if bool(full_workspace_view) else DEFAULT_SHELF_VIEW_XYXY,
         rotate_map_180=True,
     )
 
@@ -205,6 +215,7 @@ def render_belief_image(
     *,
     inputs: Mapping[str, Any],
     update_index: int,
+    full_workspace_view: bool,
 ) -> np.ndarray:
     context = build_cnabu_map_context(
         occupancy_distribution=inputs.get("occupancy_distribution"),
@@ -217,6 +228,12 @@ def render_belief_image(
         update_index=int(update_index),
         width=640,
         height=520,
+        title=(
+            "Full-workspace CNABU/MEM belief"
+            if bool(full_workspace_view)
+            else "Shelf-focused CNABU/MEM belief"
+        ),
+        view_xyxy=None if bool(full_workspace_view) else DEFAULT_SHELF_VIEW_XYXY,
         rotate_map_180=True,
     )
 
@@ -230,8 +247,8 @@ def show_graph_window(
     try:
         if first_frame:
             cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-            cv2.resizeWindow(window_name, 960, 780)
-            cv2.moveWindow(window_name, 1160, 140)
+            cv2.resizeWindow(window_name, 1280, 760)
+            cv2.moveWindow(window_name, 600, 120)
         cv2.imshow(window_name, image)
         cv2.waitKey(1)
         return True
@@ -312,7 +329,7 @@ def render_gt_topdown_panel(
     cv2.rectangle(canvas, (0, 0), (int(width), header_h - 4), (236, 240, 242), -1)
     cv2.putText(
         canvas,
-        "GT top-down",
+        "GT top-down / pre-cropped shelf",
         (18, 32),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.58,
@@ -566,6 +583,7 @@ def process_graph_update(
     diagnostics_dir: Path,
     mode: str,
     splitter: Optional[LearnedCnabuComponentSplitter],
+    display_tracker: SceneGraphDisplayTracker,
     occupancy_distribution: Any,
     semantic_concentration: Any,
     update_index: int,
@@ -603,6 +621,7 @@ def process_graph_update(
     counts = graph_counts(graph)
     if counts["uses_gt"] or counts["requires_gt"] or counts["uses_simulator_instance_labels"]:
         raise RuntimeError(f"graph input safety violation at update {update_index}: {counts}")
+    display_state = display_tracker.update(graph)
 
     image: Optional[np.ndarray] = None
     belief_image: Optional[np.ndarray] = None
@@ -610,10 +629,20 @@ def process_graph_update(
     png_path: Optional[Path] = None
     belief_png_path: Optional[Path] = None
     if bool(args.show_graph) or bool(args.save_diagnostics):
-        graph_image = render_graph_image(graph=graph, inputs=inputs, update_index=update_index)
+        graph_image = render_graph_image(
+            graph=graph,
+            inputs=inputs,
+            update_index=update_index,
+            display_state=display_state,
+            full_workspace_view=bool(args.full_workspace_view),
+        )
         panels = [graph_image]
         if bool(args.show_belief_panel):
-            belief_image = render_belief_image(inputs=inputs, update_index=update_index)
+            belief_image = render_belief_image(
+                inputs=inputs,
+                update_index=update_index,
+                full_workspace_view=bool(args.full_workspace_view),
+            )
             panels = [belief_image, graph_image]
         if bool(args.show_gt_panel) and gt_data is not None:
             gt_panel = render_gt_topdown_panel(
@@ -650,6 +679,7 @@ def process_graph_update(
         ),
         "timing": graph_timing,
         "counts": counts,
+        "display_tracking": display_state,
         "json_path": str(json_path) if json_path is not None else None,
         "png_path": str(png_path) if png_path is not None else None,
         "belief_png_path": str(belief_png_path) if belief_png_path is not None else None,
@@ -883,6 +913,7 @@ def run_policy_loop(
     diagnostics_dir: Path,
     mode: str,
     splitter: Optional[LearnedCnabuComponentSplitter],
+    display_tracker: SceneGraphDisplayTracker,
     mem: ManipulationEnhancedMapping,
     previous_map: Any,
     previous_semantic_map: Any,
@@ -945,6 +976,7 @@ def run_policy_loop(
                 diagnostics_dir=diagnostics_dir,
                 mode=mode,
                 splitter=splitter,
+                display_tracker=display_tracker,
                 occupancy_distribution=previous_map,
                 semantic_concentration=previous_semantic_map,
                 update_index=update_index,
@@ -1068,6 +1100,7 @@ def run_policy_loop(
                 diagnostics_dir=diagnostics_dir,
                 mode=mode,
                 splitter=splitter,
+                display_tracker=display_tracker,
                 occupancy_distribution=previous_map,
                 semantic_concentration=previous_semantic_map,
                 update_index=update_index,
@@ -1116,6 +1149,7 @@ def run_policy_loop(
             diagnostics_dir=diagnostics_dir,
             mode=mode,
             splitter=splitter,
+            display_tracker=display_tracker,
             occupancy_distribution=previous_map,
             semantic_concentration=previous_semantic_map,
             update_index=update_index,
@@ -1265,13 +1299,18 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--scene-graph-mode",
         choices=("split_off", "split_on_2d_candidate", "learned_component_splitter"),
-        default="split_off",
+        default="learned_component_splitter",
     )
     parser.add_argument("--checkpoint", type=Path, default=DEFAULT_CHECKPOINT_PATH)
     parser.add_argument("--updates", type=int, default=3)
     parser.add_argument("--viewpoints", default=None, help="Comma-separated viewpoint ids. Defaults to uniform ids.")
     parser.add_argument("--render", action="store_true", help="Open the PyBullet GUI.")
-    parser.add_argument("--show-graph", action="store_true", help="Open/update an OpenCV scene-graph window.")
+    parser.add_argument("--show-graph", action="store_true", help="Open/update the live OpenCV scene-graph dashboard.")
+    parser.add_argument(
+        "--full-workspace-view",
+        action="store_true",
+        help="Show the complete 140x200 MEM workspace instead of the default fixed shelf-focused viewport.",
+    )
     parser.add_argument(
         "--show-belief-panel",
         action="store_true",
@@ -1339,6 +1378,10 @@ def main() -> int:
         "viewpoints": viewpoints,
         "render": bool(args.render),
         "show_graph": bool(args.show_graph),
+        "full_workspace_view": bool(args.full_workspace_view),
+        "graph_view_xyxy": (
+            None if bool(args.full_workspace_view) else list(DEFAULT_SHELF_VIEW_XYXY)
+        ),
         "show_belief_panel": bool(args.show_belief_panel),
         "show_gt_panel": bool(args.show_gt_panel),
         "save_diagnostics": bool(args.save_diagnostics),
@@ -1383,7 +1426,8 @@ def main() -> int:
 
     mem: Optional[ManipulationEnhancedMapping] = None
     graph_window_open = False
-    window_name = "Live CNABU scene graph"
+    window_name = "MEM live spatial scene graph"
+    display_tracker = SceneGraphDisplayTracker()
     try:
         init_started = time.perf_counter()
         mem = ManipulationEnhancedMapping(
@@ -1412,6 +1456,7 @@ def main() -> int:
                 diagnostics_dir=diagnostics_dir,
                 mode=str(args.scene_graph_mode),
                 splitter=splitter,
+                display_tracker=display_tracker,
                 mem=mem,
                 previous_map=previous_map,
                 previous_semantic_map=previous_semantic_map,
@@ -1439,6 +1484,7 @@ def main() -> int:
                 diagnostics_dir=diagnostics_dir,
                 mode=str(args.scene_graph_mode),
                 splitter=splitter,
+                display_tracker=display_tracker,
                 occupancy_distribution=occupancy_distribution,
                 semantic_concentration=semantic_concentration,
                 update_index=0,
@@ -1473,6 +1519,7 @@ def main() -> int:
                 diagnostics_dir=diagnostics_dir,
                 mode=str(args.scene_graph_mode),
                 splitter=splitter,
+                display_tracker=display_tracker,
                 occupancy_distribution=previous_map,
                 semantic_concentration=previous_semantic_map,
                 update_index=1,
@@ -1509,6 +1556,7 @@ def main() -> int:
                 diagnostics_dir=diagnostics_dir,
                 mode=str(args.scene_graph_mode),
                 splitter=splitter,
+                display_tracker=display_tracker,
                 occupancy_distribution=occupancy_distribution,
                 semantic_concentration=semantic_concentration,
                 update_index=2,
@@ -1542,6 +1590,7 @@ def main() -> int:
                     diagnostics_dir=diagnostics_dir,
                     mode=str(args.scene_graph_mode),
                     splitter=splitter,
+                    display_tracker=display_tracker,
                     occupancy_distribution=occupancy_distribution,
                     semantic_concentration=semantic_concentration,
                     update_index=update_index,
