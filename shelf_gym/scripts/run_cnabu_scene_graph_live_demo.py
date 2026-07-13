@@ -4,7 +4,7 @@
 This script is a reusable MEM-side runtime entrypoint. It starts the MEM
 PyBullet environment, performs one or more CNABU observation updates, generates
 a scene graph from the live CNABU belief tensors after each update, and can
-optionally update a map-anchored OpenCV graph dashboard and save lightweight
+optionally update a map-anchored OpenCV graph visualization and save lightweight
 diagnostics. The live default follows the validated primary method: frozen
 learned component splitting with deterministic geometric relation edges.
 
@@ -39,7 +39,7 @@ from scene_graph_mem.runtime.cnabu_scene_graph_viz import (
     SceneGraphDisplayTracker,
     build_cnabu_map_context,
     render_cnabu_belief_map_view,
-    render_cnabu_scene_graph_dashboard,
+    render_cnabu_scene_graph_research_view,
 )
 from shelf_gym.utils.model_evaluation_utils import get_igs_for_map, get_subsequent_igs_for_map
 from shelf_gym.utils.pushing_utils import execute_push
@@ -198,7 +198,7 @@ def render_graph_image(
         raw_shape_hw=inputs.get("raw_shape_hw"),
         crop_rows=inputs.get("crop_rows"),
     )
-    return render_cnabu_scene_graph_dashboard(
+    return render_cnabu_scene_graph_research_view(
         graph,
         context=context,
         update_index=int(update_index),
@@ -1305,7 +1305,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--updates", type=int, default=3)
     parser.add_argument("--viewpoints", default=None, help="Comma-separated viewpoint ids. Defaults to uniform ids.")
     parser.add_argument("--render", action="store_true", help="Open the PyBullet GUI.")
-    parser.add_argument("--show-graph", action="store_true", help="Open/update the live OpenCV scene-graph dashboard.")
+    parser.add_argument("--show-graph", action="store_true", help="Open/update the live OpenCV scene-graph visualization.")
     parser.add_argument(
         "--full-workspace-view",
         action="store_true",
