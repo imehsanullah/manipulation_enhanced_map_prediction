@@ -446,6 +446,14 @@ class ManipulationEnhancedMapping(PushingCollection):
 
         # Fetch ground-truth heightmap and semantic labels
         gt_data = self.get_gt_height_map(no_tqdm=True)
+        semantic_gt_raw = gt_data["semantic_gt"].copy()
+        gt_instance_maps = np.asarray(gt_data["instance_maps"])
+        object_instance_ids = np.asarray(self.current_obj_ids, dtype=np.int64)
+        instance_to_class = self.obj.get_id_to_class_dict()
+        object_class_ids = np.asarray(
+            [instance_to_class[int(instance_id)] for instance_id in object_instance_ids.tolist()],
+            dtype=np.int64,
+        )
 
         # Process voxel heightmap: threshold, cast, and crop
         gt_voxel_heightmap = gt_data["voxel_height_map"].copy()
@@ -455,7 +463,15 @@ class ManipulationEnhancedMapping(PushingCollection):
         # Crop semantic ground-truth map to the same XY region
         semantic_gt = gt_data["semantic_gt"].copy()[35:119, 21:-21]
 
-        processed_gt = {"semantic_gt": semantic_gt, "voxel_height_map": gt_voxel_heightmap}
+        processed_gt = {
+            "semantic_gt": semantic_gt,
+            "voxel_height_map": gt_voxel_heightmap,
+            # Privileged evaluation references. These are never CNABU inputs.
+            "semantic_gt_raw": semantic_gt_raw,
+            "instance_maps": gt_instance_maps,
+            "object_instance_ids": object_instance_ids,
+            "object_class_ids": object_class_ids,
+        }
         return camera_array_data, processed_gt
 
 

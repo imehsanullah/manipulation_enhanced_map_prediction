@@ -33,12 +33,18 @@ from scene_graph_mem.runtime.cnabu_learned_component_splitter import (
     DEFAULT_CHECKPOINT_PATH,
     LearnedCnabuComponentSplitter,
 )
-from scene_graph_mem.runtime.cnabu_scene_graph import predict_scene_graph_from_cnabu
+from scene_graph_mem.runtime.cnabu_scene_graph import (
+    DEFAULT_YCB_CLASS_NAMES,
+    build_blocks_access_edges,
+    encode_binary_mask_rle,
+    predict_scene_graph_from_cnabu,
+)
 from scene_graph_mem.runtime.cnabu_scene_graph_viz import (
     DEFAULT_CLASS_PALETTE_BGR,
     SceneGraphDisplayTracker,
     build_cnabu_map_context,
     render_cnabu_belief_map_view,
+    render_cnabu_context_background,
     render_cnabu_scene_graph_research_view,
 )
 from shelf_gym.utils.model_evaluation_utils import get_igs_for_map, get_subsequent_igs_for_map
@@ -53,6 +59,9 @@ CROP_ROWS = (10, 130)
 # 5 mm MEM grid. Eight pixels of fixed safety context keep borders and pushed
 # objects visible without showing the much larger robot workspace.
 DEFAULT_SHELF_VIEW_XYXY = (12, 32, 188, 126)
+# ``get_processed_array_and_gt_data`` returns this fixed crop from the raw
+# 140x200 MEM grid. Re-embedding it makes prediction and GT directly aligned.
+GT_RAW_CROP_XYXY = (21, 35, 179, 119)
 MODE_CONFIGS = {
     "split_off": {"enabled": False},
     "split_on_2d_candidate": {"enabled": True, "method": "candidate_gated_2d_footprint"},
@@ -247,26 +256,18 @@ def show_graph_window(
     try:
         if first_frame:
             cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-            cv2.resizeWindow(window_name, 1280, 760)
-            cv2.moveWindow(window_name, 600, 120)
+            image_h, image_w = image.shape[:2]
+            window_scale = min(1680.0 / max(image_w, 1), 760.0 / max(image_h, 1))
+            window_w = max(1, int(round(image_w * window_scale)))
+            window_h = max(1, int(round(image_h * window_scale)))
+            cv2.resizeWindow(window_name, window_w, window_h)
+            cv2.moveWindow(window_name, 80 if window_w > 1280 else 600, 120)
         cv2.imshow(window_name, image)
         cv2.waitKey(1)
         return True
     except cv2.error as exc:
         print(f"Could not update graph window: {exc}", file=sys.stderr)
         return False
-
-
-def _normalise01(values: Any) -> np.ndarray:
-    array = np.asarray(values, dtype=np.float32)
-    finite = np.isfinite(array)
-    if not bool(finite.any()):
-        return np.zeros_like(array, dtype=np.float32)
-    min_value = float(array[finite].min())
-    max_value = float(array[finite].max())
-    if max_value <= min_value + 1e-8:
-        return np.zeros_like(array, dtype=np.float32)
-    return np.clip((array - min_value) / (max_value - min_value), 0.0, 1.0)
 
 
 def _to_numpy_cpu(value: Any) -> np.ndarray:
@@ -277,78 +278,244 @@ def _to_numpy_cpu(value: Any) -> np.ndarray:
     return np.asarray(value)
 
 
-def _letterbox_bgr(image: np.ndarray, width: int, height: int, *, fill: int = 232) -> np.ndarray:
-    image_h, image_w = image.shape[:2]
-    scale = min(float(width) / max(image_w, 1), float(height) / max(image_h, 1))
-    resized_w = max(1, int(round(image_w * scale)))
-    resized_h = max(1, int(round(image_h * scale)))
-    resized = cv2.resize(image[:, :, :3], (resized_w, resized_h), interpolation=cv2.INTER_NEAREST)
-    canvas = np.full((int(height), int(width), 3), int(fill), dtype=np.uint8)
-    x = (int(width) - resized_w) // 2
-    y = (int(height) - resized_h) // 2
-    canvas[y:y + resized_h, x:x + resized_w] = resized
-    return canvas
+def _align_gt_to_raw_view(
+    semantic_gt: np.ndarray,
+    occupancy_projection: np.ndarray,
+    *,
+    view_xyxy: Optional[Sequence[int]],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Re-embed the pre-cropped simulator GT in raw MEM coordinates."""
+
+    semantic_gt = np.asarray(semantic_gt, dtype=np.int32)
+    occupancy_projection = np.asarray(occupancy_projection, dtype=np.float32)
+    if semantic_gt.ndim != 2 or occupancy_projection.ndim != 2:
+        raise ValueError("semantic_gt and occupancy projection must be two-dimensional")
+
+    gt_x1, gt_y1, gt_x2, gt_y2 = GT_RAW_CROP_XYXY
+    gt_width = int(gt_x2 - gt_x1)
+    gt_height = int(gt_y2 - gt_y1)
+    if semantic_gt.shape != (gt_height, gt_width):
+        semantic_gt = cv2.resize(
+            semantic_gt.astype(np.float32),
+            (gt_width, gt_height),
+            interpolation=cv2.INTER_NEAREST,
+        ).round().astype(np.int32)
+    if occupancy_projection.shape != (gt_height, gt_width):
+        occupancy_projection = cv2.resize(
+            occupancy_projection,
+            (gt_width, gt_height),
+            interpolation=cv2.INTER_NEAREST,
+        ).astype(np.float32)
+
+    raw_height, raw_width = RAW_SHAPE_HW
+    raw_semantic = np.full((raw_height, raw_width), len(DEFAULT_CLASS_PALETTE_BGR) - 1, dtype=np.int32)
+    raw_occupancy = np.zeros((raw_height, raw_width), dtype=np.float32)
+    raw_valid = np.zeros((raw_height, raw_width), dtype=bool)
+    raw_semantic[gt_y1:gt_y2, gt_x1:gt_x2] = semantic_gt
+    raw_occupancy[gt_y1:gt_y2, gt_x1:gt_x2] = occupancy_projection
+    raw_valid[gt_y1:gt_y2, gt_x1:gt_x2] = True
+
+    if view_xyxy is None:
+        view_x1, view_y1, view_x2, view_y2 = 0, 0, raw_width, raw_height
+    else:
+        coordinates = np.asarray(view_xyxy).reshape(-1)
+        if coordinates.size != 4:
+            raise ValueError(f"view_xyxy must contain four entries, got {view_xyxy!r}")
+        view_x1, view_y1, view_x2, view_y2 = [int(value) for value in coordinates.tolist()]
+        if (
+            view_x1 < 0
+            or view_y1 < 0
+            or view_x2 > raw_width
+            or view_y2 > raw_height
+            or view_x2 <= view_x1
+            or view_y2 <= view_y1
+        ):
+            raise ValueError(f"view_xyxy lies outside the raw MEM grid: {view_xyxy!r}")
+
+    view_slice = np.s_[view_y1:view_y2, view_x1:view_x2]
+    return raw_semantic[view_slice], raw_occupancy[view_slice], raw_valid[view_slice]
+
+
+def _gt_instance_stack_in_raw_frame(value: Any) -> np.ndarray:
+    stack = np.asarray(_to_numpy_cpu(value))
+    if stack.ndim == 2:
+        stack = stack[None, ...]
+    if stack.ndim != 3:
+        raise ValueError(f"GT instance_maps must have shape [H,W] or [V,H,W], got {stack.shape}")
+    if tuple(stack.shape[-2:]) == RAW_SHAPE_HW:
+        return stack
+
+    gt_x1, gt_y1, gt_x2, gt_y2 = GT_RAW_CROP_XYXY
+    gt_shape = (gt_y2 - gt_y1, gt_x2 - gt_x1)
+    if tuple(stack.shape[-2:]) == gt_shape:
+        raw = np.zeros((stack.shape[0], *RAW_SHAPE_HW), dtype=stack.dtype)
+        raw[:, gt_y1:gt_y2, gt_x1:gt_x2] = stack
+        return raw
+    raise ValueError(
+        f"GT instance-map spatial shape {stack.shape[-2:]} is neither raw {RAW_SHAPE_HW} nor crop {gt_shape}"
+    )
+
+
+def _majority_gt_class(semantic_gt_raw: np.ndarray, mask: np.ndarray) -> Optional[int]:
+    values = np.asarray(semantic_gt_raw)[np.asarray(mask, dtype=bool)]
+    values = values[np.isfinite(values)]
+    if values.size == 0:
+        return None
+    labels = np.rint(values).astype(np.int64)
+    labels = labels[(labels >= 0) & (labels < len(DEFAULT_YCB_CLASS_NAMES) - 1)]
+    if labels.size == 0:
+        return None
+    unique, counts = np.unique(labels, return_counts=True)
+    return int(unique[int(np.argmax(counts))])
+
+
+def build_gt_instance_scene_graph(
+    gt_data: Mapping[str, Any],
+) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    """Build an evaluation-only graph from privileged simulator instance masks."""
+
+    if "instance_maps" not in gt_data:
+        raise KeyError("GT comparison requires simulator instance_maps")
+
+    semantic_crop = np.asarray(_to_numpy_cpu(gt_data["semantic_gt"]), dtype=np.int32)
+    occupancy_gt = np.asarray(_to_numpy_cpu(gt_data["voxel_height_map"]), dtype=np.float32)
+    occupancy_projection = occupancy_gt.max(axis=2) if occupancy_gt.ndim == 3 else occupancy_gt
+    aligned_semantic, raw_occupancy, _ = _align_gt_to_raw_view(
+        semantic_crop,
+        occupancy_projection,
+        view_xyxy=None,
+    )
+    semantic_gt_raw = np.asarray(
+        _to_numpy_cpu(gt_data.get("semantic_gt_raw", aligned_semantic)),
+        dtype=np.int32,
+    )
+    if semantic_gt_raw.shape != RAW_SHAPE_HW:
+        raise ValueError(
+            f"semantic_gt_raw shape {semantic_gt_raw.shape} must match raw MEM shape {RAW_SHAPE_HW}"
+        )
+
+    instance_stack = _gt_instance_stack_in_raw_frame(gt_data["instance_maps"])
+    finite = instance_stack[np.isfinite(instance_stack)]
+    map_instance_ids = {
+        int(round(float(value)))
+        for value in np.unique(finite)
+        if float(value) > 0.0 and np.isclose(value, round(float(value)))
+    }
+    declared_instance_ids = np.asarray(gt_data.get("object_instance_ids", []), dtype=np.int64).reshape(-1)
+    declared_class_ids = np.asarray(gt_data.get("object_class_ids", []), dtype=np.int64).reshape(-1)
+    if declared_instance_ids.size != declared_class_ids.size:
+        raise ValueError("object_instance_ids and object_class_ids must have the same length")
+    declared_classes = {
+        int(instance_id): int(class_id)
+        for instance_id, class_id in zip(declared_instance_ids.tolist(), declared_class_ids.tolist())
+    }
+    candidate_ids = sorted(map_instance_ids & set(declared_classes)) if declared_classes else sorted(map_instance_ids)
+
+    nodes: List[Dict[str, Any]] = []
+    for simulator_instance_id in candidate_ids:
+        mask = np.any(instance_stack == int(simulator_instance_id), axis=0)
+        class_id = declared_classes.get(
+            int(simulator_instance_id),
+            _majority_gt_class(semantic_gt_raw, mask),
+        )
+        if class_id is None or not bool(mask.any()):
+            continue
+        ys, xs = np.nonzero(mask)
+        node_id = len(nodes) + 1
+        nodes.append(
+            {
+                "id": int(node_id),
+                "simulator_instance_id": int(simulator_instance_id),
+                "class_id": int(class_id),
+                "class_name": str(DEFAULT_YCB_CLASS_NAMES[int(class_id)]),
+                "bbox_xyxy_abs": [
+                    int(xs.min()),
+                    int(ys.min()),
+                    int(xs.max()) + 1,
+                    int(ys.max()) + 1,
+                ],
+                "centroid_yx": [float(ys.mean()), float(xs.mean())],
+                "area_pixels": int(mask.sum()),
+                "score": 1.0,
+                "mask": encode_binary_mask_rle(mask),
+                "source": "simulator_gt_instance_masks",
+            }
+        )
+
+    edge_config = {
+        "relation": "blocks_access_to",
+        "access_axis": "y",
+        "opening_side": "low",
+        "min_front_gap": 0.0,
+        "min_lateral_overlap": 0.0,
+        "lateral_overlap_mode": "union",
+    }
+    edges, edge_metadata = build_blocks_access_edges(
+        nodes,
+        config=edge_config,
+        image_shape_hw=RAW_SHAPE_HW,
+    )
+    adjacency = [[0 for _ in nodes] for _ in nodes]
+    for edge in edges:
+        adjacency[int(edge["source_index"])][int(edge["target_index"])] = 1
+
+    graph: Dict[str, Any] = {
+        "schema": "mem_gt_instance_scene_graph_v0",
+        "nodes": nodes,
+        "edges": edges,
+        "adjacency_matrix": adjacency,
+        "thresholds": {"edge_rule": edge_config},
+        "metadata": {
+            "node_source": "simulator_gt_instance_masks",
+            "runtime_mode": "simulator_gt_instance_masks",
+            "num_nodes": int(len(nodes)),
+            "num_edges": int(len(edges)),
+            "raw_shape_hw": list(RAW_SHAPE_HW),
+            "instance_map_views": int(instance_stack.shape[0]),
+            "uses_gt": True,
+            "requires_gt": True,
+            "uses_simulator_instance_labels": True,
+            "edge_metadata": edge_metadata,
+            "evaluation_only": True,
+        },
+    }
+    background = render_cnabu_context_background(
+        occupancy_projection=raw_occupancy,
+        semantic_labels=semantic_gt_raw,
+        semantic_confidence=np.ones(RAW_SHAPE_HW, dtype=np.float32),
+    )
+    context: Dict[str, Any] = {
+        "background_bgr": background,
+        "raw_shape_hw": list(RAW_SHAPE_HW),
+    }
+    return graph, context
 
 
 def render_gt_topdown_panel(
     gt_data: Mapping[str, Any],
     *,
-    width: int = 640,
-    height: int = 520,
+    width: int = 1280,
+    height: int = 760,
+    update_index: Optional[int] = None,
+    view_xyxy: Optional[Sequence[int]] = DEFAULT_SHELF_VIEW_XYXY,
     rotate_180: bool = True,
 ) -> np.ndarray:
-    semantic_gt = np.asarray(_to_numpy_cpu(gt_data["semantic_gt"]), dtype=np.int32)
-    occupancy_gt = np.asarray(_to_numpy_cpu(gt_data["voxel_height_map"]), dtype=np.float32)
-    if occupancy_gt.ndim == 3:
-        occupancy_projection = occupancy_gt.max(axis=2)
-    else:
-        occupancy_projection = occupancy_gt
-    if occupancy_projection.shape != semantic_gt.shape:
-        occupancy_projection = cv2.resize(
-            occupancy_projection,
-            (semantic_gt.shape[1], semantic_gt.shape[0]),
-            interpolation=cv2.INTER_NEAREST,
-        )
+    """Render an evaluation-only GT instance graph in the MEM map frame."""
 
-    palette = np.asarray(DEFAULT_CLASS_PALETTE_BGR, dtype=np.uint8)
-    labels = np.clip(semantic_gt, 0, len(palette) - 1)
-    semantic_bgr = palette[labels].astype(np.float32)
-    occupancy = _normalise01(occupancy_projection)[..., None]
-    neutral = np.full_like(semantic_bgr, 236.0)
-    topdown = np.clip(neutral * (1.0 - occupancy) + semantic_bgr * (0.42 + 0.58 * occupancy), 0, 255).astype(np.uint8)
-    topdown[occupancy_projection <= 0] = np.array([56, 58, 62], dtype=np.uint8)
-    if bool(rotate_180):
-        topdown = cv2.rotate(topdown, cv2.ROTATE_180)
-
-    canvas = np.full((int(height), int(width), 3), 246, dtype=np.uint8)
-    header_h = 58
-    footer_h = 44
-    margin = 18
-    panel = _letterbox_bgr(topdown, int(width) - 2 * margin, int(height) - header_h - footer_h, fill=68)
-    canvas[header_h:header_h + panel.shape[0], margin:margin + panel.shape[1]] = panel
-    cv2.rectangle(canvas, (0, 0), (int(width), header_h - 4), (236, 240, 242), -1)
-    cv2.putText(
-        canvas,
-        "GT top-down / pre-cropped shelf",
-        (18, 32),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.58,
-        (36, 42, 48),
-        2,
-        cv2.LINE_AA,
+    graph, context = build_gt_instance_scene_graph(gt_data)
+    return render_cnabu_scene_graph_research_view(
+        graph,
+        context=context,
+        update_index=update_index,
+        width=int(width),
+        height=int(height),
+        max_edges=36,
+        view_xyxy=view_xyxy,
+        rotate_map_180=bool(rotate_180),
+        title="Ground-truth Scene Graph",
+        subtitle="Simulator instance masks (evaluation only; not used by CNABU inference)",
+        method_label="independent GT node IDs; deterministic rule edges",
     )
-    footer_text = "simulator GT display only"
-    cv2.putText(
-        canvas,
-        footer_text,
-        (18, int(height) - 18),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.38,
-        (70, 78, 86),
-        1,
-        cv2.LINE_AA,
-    )
-    return canvas
 
 
 def compose_graph_gt_panel(graph_bgr: np.ndarray, gt_bgr: np.ndarray) -> np.ndarray:
@@ -637,6 +804,7 @@ def process_graph_update(
             full_workspace_view=bool(args.full_workspace_view),
         )
         panels = [graph_image]
+        gt_panel: Optional[np.ndarray] = None
         if bool(args.show_belief_panel):
             belief_image = render_belief_image(
                 inputs=inputs,
@@ -649,9 +817,18 @@ def process_graph_update(
                 gt_data,
                 width=graph_image.shape[1],
                 height=graph_image.shape[0],
+                update_index=update_index,
+                view_xyxy=(
+                    None if bool(args.full_workspace_view) else DEFAULT_SHELF_VIEW_XYXY
+                ),
+                rotate_180=True,
             )
             panels.append(gt_panel)
-        image = compose_diagnostic_panels(panels)
+        image = (
+            compose_graph_gt_panel(graph_image, gt_panel)
+            if gt_panel is not None and not bool(args.show_belief_panel)
+            else compose_diagnostic_panels(panels)
+        )
     if bool(args.save_diagnostics):
         safe_kind = str(update_kind).replace(" ", "_")
         json_path = diagnostics_dir / f"update_{update_index:03d}_{safe_kind}_graph.json"
@@ -1316,7 +1493,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Append a CNABU belief-map-only panel beside the graph view; no graph nodes or edges are drawn on it.",
     )
-    parser.add_argument("--show-gt-panel", action="store_true", help="Show diagnostic simulator GT beside the belief graph.")
+    parser.add_argument(
+        "--show-gt-panel",
+        action="store_true",
+        help="Show the coordinate-aligned GT instance scene graph beside the prediction (evaluation only).",
+    )
     parser.add_argument("--enable-push", action="store_true", help="Run observe, push-predicted, post-push observe.")
     parser.add_argument("--policy-loop", action="store_true", help="Run a bounded MEM observe-vs-push policy loop.")
     parser.add_argument("--action-budget", type=int, default=6, help="Policy-loop action budget. MEM's full default is 40.")
