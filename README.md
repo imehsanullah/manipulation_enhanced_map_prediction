@@ -73,6 +73,58 @@ Alternatively, you can collect the data for the [viewpoint push planning](https:
   python dengler_iros_2023_map_collection.py 
 ```
 
+# Thesis action-conditioned relation oracle
+
+The thesis workspace adds a PyBullet adapter for generating physical
+`blocks_access_to` evidence from the saved MEM shelf scenes. It replays the
+saved object poses, evaluates a 3-by-3 frontal grasp/extraction grid, and
+queries both robot and rigidly carried-target collisions for each action
+stage. The portable scoring contract lives in the sibling `scene_graph_mem`
+project.
+
+Inspect one scene without writing anything:
+
+```bash
+PYTHONPATH=/home/user/ehsanullahm1/thesis/scene_graph_mem/src:. \
+  /home/user/ehsanullahm1/miniconda3/envs/manipulation_map/bin/python \
+  shelf_gym/scripts/inspect_action_conditioned_relation_oracle.py \
+  --sample-dir /data/manipulation_map_data/raw/map_data/13/000000054/pre_action
+```
+
+Supplying `--output-dir` exports full continuous scores, validity masks,
+per-trajectory blocker sets, the retained `geometry_pseudo_gt_v0` comparison,
+and optional 3D diagnostics. Existing output directories are never
+overwritten. The paired counterfactual pilot is run with
+`shelf_gym/scripts/validate_action_conditioned_relation_counterfactuals.py`.
+
+The v1 adapter separates shallow contact from penetration deeper than the
+configured hard-contact threshold. Its randomized counterfactual check defines
+clean extraction relative to each candidate's planned motion and rejects a
+trial when the monitored blocker must be displaced significantly. It still
+uses forced attachment after the grasp waypoint, so it validates access and
+extraction rather than autonomous grasp closure.
+
+For live candidate-level scene-graph inference, this project owns planner-side
+action eligibility. `build_cnabu_runtime_candidate_action_mask` converts
+ordered sparse learned-node support to robust, calibrated world boxes, solves
+pregrasp/grasp/lift/extraction IK for the frozen 3-by-3 candidate family, and
+checks the robot plus a temporary carried-target proxy against only known
+fixed shelf/rack/table/wall geometry. The CNABU image-x reflection is handled
+explicitly, and the default 5% support envelope avoids treating uncertain
+one-voxel tails as exact collision geometry. The result is an aligned `[N,9]`
+mask that uses no GT mask, simulator object id/pose, or dynamic-object query.
+Dynamic source-object blockage remains the learned term in the sibling
+`scene_graph_mem` project. The older IK-only adapter is retained for the
+factorized-v1 ablation.
+
+`shelf_gym/scripts/audit_cnabu_runtime_candidate_action_mask.py` checks the
+frozen 100-record cause contract and can run a bounded live fidelity audit.
+Its GT masks and oracle causes are loaded only after runtime inference for
+matching and metrics; they never enter the planner mask.
+`shelf_gym/scripts/export_cnabu_runtime_candidate_action_masks.py` is the
+separate no-GT materializer for approved experiments. It writes a small mask
+JSON per explicit record plus an enriched records JSON, refuses overwrites,
+and supports `--validate-only` without writing outputs.
+
 # Issue Tracker
  - 
-
