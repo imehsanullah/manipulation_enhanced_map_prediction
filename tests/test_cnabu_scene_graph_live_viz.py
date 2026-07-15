@@ -8,12 +8,38 @@ from shelf_gym.scripts.run_cnabu_scene_graph_live_demo import (
     DEFAULT_SHELF_VIEW_XYXY,
     _align_gt_to_raw_view,
     build_gt_instance_scene_graph,
+    cnabu_mean_arrays_from_live_belief,
     compose_graph_gt_panel,
     render_gt_topdown_panel,
 )
 
 
 class CnabuSceneGraphLiveVizTest(unittest.TestCase):
+    def test_live_belief_means_preserve_interleaved_cnabu_contract(self) -> None:
+        occupancy = np.stack(
+            [
+                np.full((2, 3), 3.0),
+                np.full((2, 3), 1.0),
+                np.full((2, 3), 1.0),
+                np.full((2, 3), 3.0),
+            ],
+            axis=0,
+        )[None, ...]
+        semantic = np.stack(
+            [np.full((2, 3), 1.0), np.full((2, 3), 3.0)], axis=0
+        )[None, ...]
+
+        occupancy_mean, semantic_mean = cnabu_mean_arrays_from_live_belief(
+            occupancy, semantic
+        )
+
+        self.assertEqual(occupancy_mean.shape, (2, 2, 3))
+        self.assertEqual(semantic_mean.shape, (2, 2, 3))
+        np.testing.assert_allclose(occupancy_mean[0], 0.25)
+        np.testing.assert_allclose(occupancy_mean[1], 0.75)
+        np.testing.assert_allclose(semantic_mean[0], 0.25)
+        np.testing.assert_allclose(semantic_mean[1], 0.75)
+
     def _gt_arrays(self) -> tuple[np.ndarray, np.ndarray]:
         semantic = np.full((84, 158), 14, dtype=np.int32)
         occupancy = np.zeros((84, 158, 3), dtype=np.float32)

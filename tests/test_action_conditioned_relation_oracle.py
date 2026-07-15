@@ -8,6 +8,8 @@ import numpy as np
 
 from shelf_gym.utils.action_conditioned_relation_oracle import (
     OracleActionFamilyConfig,
+    StaticOraclePerturbationConfig,
+    apply_static_oracle_pose_yaw_perturbation,
     build_cnabu_runtime_candidate_kinematic_mask,
     build_candidate_planner_swept_features,
     build_geometry_pseudo_gt_adjacency,
@@ -23,6 +25,7 @@ from shelf_gym.utils.action_conditioned_relation_oracle import (
     summarize_extraction_progress,
     summarize_monitored_displacement,
     summarize_signed_distances,
+    rethreshold_static_oracle_contact_evidence,
 )
 from shelf_gym.scripts.inspect_action_conditioned_relation_oracle import select_scene_disjoint_round_robin
 from shelf_gym.scripts.validate_action_conditioned_relation_counterfactuals import (
@@ -31,9 +34,434 @@ from shelf_gym.scripts.validate_action_conditioned_relation_counterfactuals impo
     select_hard_penetration_threshold,
     select_stratified_counterfactuals,
 )
+from shelf_gym.scripts.audit_ranked_blocker_score_stability import (
+    select_predeclared_stability_records,
+    validate_stability_run_matching,
+)
+from shelf_gym.scripts.validate_ranked_blocker_counterfactuals import (
+    aggregate_frozen_test_policy_results,
+    build_frozen_test_causal_report,
+    build_frozen_test_policy_contract,
+    select_stratified_dynamic_targets,
+)
 
 
 class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
+    def test_frozen_test_policy_contract_preserves_unmatched_model_steps_as_noops(self) -> None:
+        base = {
+            "sample_id": "14/scene",
+            "target_instance_id": 50,
+            "scene_group": "14",
+            "stratum": "single__tied__approach__z0.35",
+            "static_structure": "single_removal_positive",
+            "eligible_candidate_ids": ["c0"],
+            "valid_source_ids": [10, 20, 30],
+            "positive_source_ids": [10, 20],
+            "random_all_source_order": [30, 10, 20],
+            "geometry_all_source_order": [20, 30, 10],
+            "policy_orders": {
+                "raw_salience": [10, 20],
+                "single_removal_gain": [20, 10],
+                "greedy_conditional_gain": [10, 20],
+            },
+            "policy_static_scores": {
+                "raw_salience": {10: 1.0, 20: 0.5},
+                "single_removal_gain": {10: 0.5, 20: 0.25},
+                "shared_path_credit": {10: 0.75, 20: 0.25},
+            },
+            "conditions": [
+                {
+                    "condition_id": "remove_none_intact",
+                    "removed_source_ids": [],
+                    "roles": ["intact"],
+                },
+                {
+                    "condition_id": "remove_10",
+                    "removed_source_ids": [10],
+                    "roles": ["existing"],
+                },
+                {
+                    "condition_id": "remove_10_20",
+                    "removed_source_ids": [10, 20],
+                    "roles": ["existing"],
+                },
+                {
+                    "condition_id": "remove_20",
+                    "removed_source_ids": [20],
+                    "roles": ["existing"],
+                },
+            ],
+        }
+        prediction = {
+            "sample_id": "14/scene",
+            "matched_gt_target_instance_id": 50,
+            "learned_target_node_id": 5,
+            "rank_query_valid": True,
+            "target_blockage_defined": True,
+            "explainability_fraction": 0.75,
+            "matched_executable_source_count": 2,
+            "unmatched_learned_source_count": 1,
+            "accepted_absolute_probability_order": [
+                {
+                    "learned_source_node_id": 1,
+                    "matched_gt_source_instance_id": None,
+                },
+                {
+                    "learned_source_node_id": 2,
+                    "matched_gt_source_instance_id": 10,
+                },
+            ],
+            "accepted_conditional_union_gain_order": [
+                {
+                    "learned_source_node_id": 2,
+                    "matched_gt_source_instance_id": 10,
+                },
+                {
+                    "learned_source_node_id": 3,
+                    "matched_gt_source_instance_id": 20,
+                },
+            ],
+            "random_visible_source_order": [
+                {
+                    "learned_source_node_id": 1,
+                    "matched_gt_source_instance_id": None,
+                },
+                {
+                    "learned_source_node_id": 3,
+                    "matched_gt_source_instance_id": 20,
+                },
+            ],
+            "deterministic_learned_geometry_order": [
+                {
+                    "learned_source_node_id": 4,
+                    "matched_gt_source_instance_id": 30,
+                },
+                {
+                    "learned_source_node_id": 3,
+                    "matched_gt_source_instance_id": 20,
+                },
+            ],
+            "non_oracle_baseline_inputs": (
+                "learned CNABU planner-swept overlap/clearance, runtime node "
+                "ids, and learned 2D boxes only"
+            ),
+            "non_oracle_geometry_candidate_mask_source": (
+                "runtime_kinematic_and_fixed_environment_collision_free_masks"
+            ),
+        }
+
+        joined = build_frozen_test_policy_contract(base, prediction)
+
+        absolute = joined["frozen_test_policies"]["accepted_absolute_probability"]
+        self.assertFalse(absolute[0]["intervention_executable"])
+        self.assertEqual(absolute[0]["removed_source_ids_after_step"], [])
+        self.assertEqual(absolute[1]["removed_source_ids_after_step"], [10])
+        self.assertFalse(
+            joined["frozen_test_policies"]["random_visible_source"][0][
+                "intervention_executable"
+            ]
+        )
+        condition_sets = {
+            tuple(item["removed_source_ids"]) for item in joined["conditions"]
+        }
+        self.assertIn((30,), condition_sets)
+        self.assertIn((20, 30), condition_sets)
+
+        condition_summaries = {}
+        access = {
+            (): 0.0,
+            (10,): 0.3,
+            (20,): 0.5,
+            (30,): 0.0,
+            (10, 20): 1.0,
+            (10, 30): 0.3,
+            (20, 30): 0.5,
+        }
+        for index, (removed, value) in enumerate(access.items()):
+            condition_summaries[str(index)] = {
+                "removed_source_ids": list(removed),
+                "dynamic_accessibility": value,
+            }
+        aggregated = aggregate_frozen_test_policy_results(
+            {
+                "intact_dynamic_accessibility": 0.0,
+                "best_dynamic_singleton_access_gain": 0.5,
+                "condition_summaries": condition_summaries,
+            },
+            joined["frozen_test_policies"],
+        )
+        self.assertEqual(
+            aggregated["accepted_absolute_probability"][
+                "dynamic_accessibility_at_k"
+            ],
+            [0.0, 0.0, 0.3],
+        )
+        self.assertEqual(
+            aggregated["accepted_absolute_probability"]["unmatched_noop_step_count"],
+            1,
+        )
+        self.assertAlmostEqual(
+            aggregated["accepted_absolute_probability"]["top1_regret"], 0.5
+        )
+        self.assertAlmostEqual(
+            aggregated["oracle_dynamic_best_single"][
+                "top1_dynamic_access_gain"
+            ],
+            0.5,
+        )
+        self.assertTrue(
+            aggregated["oracle_dynamic_best_single"][
+                "uses_dynamic_outcomes_as_oracle_upper_bound"
+            ]
+        )
+
+        trials = []
+        for condition in joined["conditions"]:
+            removed = list(condition["removed_source_ids"])
+            trials.append(
+                {
+                    "condition_id": condition["condition_id"],
+                    "removed_source_ids": removed,
+                    "candidate_id": "c0",
+                    "seed": 0,
+                    "clean_extraction_success": bool(removed),
+                    "failure_causes": [] if removed else ["approach_joint_tracking"],
+                }
+            )
+        report = build_frozen_test_causal_report(
+            [joined],
+            [
+                {
+                    "sample_id": "14/scene",
+                    "target_instance_id": 50,
+                    "trials": trials,
+                }
+            ],
+            seeds=[0],
+            ranking_target_decision={"schema": "cnabu_ranking_target_decision_v1"},
+            frozen_predictions_identity={"sha256": "1" * 64},
+            frozen_test_coverage={"high_coverage_executable_contract_count": 1},
+        )
+        self.assertEqual(
+            report["schema"], "ranked_blocker_frozen_test_causal_report_v1"
+        )
+        self.assertEqual(report["query_coverage"]["executed_target_query_count"], 1)
+        self.assertEqual(
+            report["summary"]["failure_modes_by_scene_group"]["14"][
+                "stage_cause_occurrence_counts"
+            ]["approach"],
+            1,
+        )
+        self.assertFalse(
+            report["thesis_level_causal_acceptance"][
+                "ranked_graph_is_supported_as_manipulation_policy"
+            ]
+        )
+
+    def test_stability_selection_and_pairing_use_scene_target_candidate_and_seed(self) -> None:
+        records = [
+            {"sample_id": "0/b"},
+            {"sample_id": "1/c"},
+            {"sample_id": "0/a"},
+            {"sample_id": "2/test"},
+        ]
+        selected = select_predeclared_stability_records(
+            records,
+            allowed_sample_ids=["0/a", "0/b", "1/c"],
+            scene_groups=["0", "1"],
+            records_per_group=1,
+        )
+        self.assertEqual([item["sample_id"] for item in selected], ["0/a", "1/c"])
+
+        variant = {
+            "node_order_instance_ids": [10, 20],
+            "targets": [
+                {
+                    "target_instance_id": 10,
+                    "trajectories": [{"trajectory_id": "10/candidate"}],
+                }
+            ],
+        }
+        reference = {
+            "sample_id": "0/a",
+            "variants_by_hard_penetration_m": {"0.002": variant},
+        }
+        perturbed = {
+            "sample_id": "0/a",
+            "seed": 2,
+            "variants_by_hard_penetration_m": {"0.002": variant},
+        }
+        validate_stability_run_matching(reference, perturbed, expected_seed=2)
+        perturbed["seed"] = 1
+        with self.assertRaisesRegex(ValueError, "seed"):
+            validate_stability_run_matching(reference, perturbed, expected_seed=2)
+
+    def test_dynamic_target_selection_balances_structure_and_rankability_per_group(self) -> None:
+        contracts = []
+        for group in ("0", "1"):
+            for index, (structure, rankable) in enumerate(
+                (
+                    ("single_removal_positive", False),
+                    ("cooperative_zero_single_gain", False),
+                    ("single_removal_positive", True),
+                    ("cooperative_zero_single_gain", True),
+                )
+            ):
+                contracts.append(
+                    {
+                        "sample_id": "{}/{}".format(group, index),
+                        "scene_group": group,
+                        "target_instance_id": index + 10,
+                        "static_structure": structure,
+                        "rank_correlation_eligible_structure": rankable,
+                        "raw_maximum_tied": structure.startswith("cooperative"),
+                        "dominant_blocker_stage": ("approach", "grasp", "extraction")[
+                            index % 3
+                        ],
+                        "dominant_candidate_height": ("0.35", "0.55", "0.75")[
+                            index % 3
+                        ],
+                        "positive_source_ids": [20, 30] if rankable else [20],
+                    }
+                )
+
+        selected = select_stratified_dynamic_targets(
+            contracts,
+            scene_groups=["0", "1"],
+            target_count=8,
+        )
+
+        self.assertEqual(len(selected), 8)
+        for group in ("0", "1"):
+            group_rows = [item for item in selected if item["scene_group"] == group]
+            self.assertEqual({item["static_structure"] for item in group_rows}, {
+                "single_removal_positive",
+                "cooperative_zero_single_gain",
+            })
+            self.assertEqual(
+                {bool(item["rank_correlation_eligible_structure"]) for item in group_rows},
+                {False, True},
+            )
+
+    def test_static_score_perturbation_changes_pose_and_yaw_but_never_friction(self) -> None:
+        class FakeBullet:
+            def __init__(self):
+                self.poses = {
+                    10: ([1.0, 2.0, 3.0], [0.0, 0.0, 0.0, 1.0]),
+                    20: ([4.0, 5.0, 6.0], [0.0, 0.0, 0.0, 1.0]),
+                }
+                self.reset_calls = []
+                self.collision_detection_calls = 0
+
+            def getBasePositionAndOrientation(self, instance_id, **_kwargs):
+                return self.poses[int(instance_id)]
+
+            def getEulerFromQuaternion(self, _orientation):
+                return [0.0, 0.0, 0.0]
+
+            def getQuaternionFromEuler(self, euler):
+                return [float(euler[0]), float(euler[1]), float(euler[2]), 1.0]
+
+            def resetBasePositionAndOrientation(self, instance_id, position, orientation, **_kwargs):
+                self.poses[int(instance_id)] = (list(position), list(orientation))
+                self.reset_calls.append(int(instance_id))
+
+            def getAABB(self, instance_id, **_kwargs):
+                position = np.asarray(self.poses[int(instance_id)][0], dtype=np.float64)
+                return (position - 0.1).tolist(), (position + 0.1).tolist()
+
+            def performCollisionDetection(self, **_kwargs):
+                self.collision_detection_calls += 1
+
+        class FakeEnv:
+            client_id = 7
+
+            def __init__(self):
+                self._p = FakeBullet()
+
+        environment = FakeEnv()
+        object_records = [
+            {"instance_id": 20, "world_aabb": [[0, 0, 0], [1, 1, 1]]},
+            {"instance_id": 10, "world_aabb": [[0, 0, 0], [1, 1, 1]]},
+        ]
+
+        result = apply_static_oracle_pose_yaw_perturbation(
+            environment,
+            object_records=object_records,
+            config=StaticOraclePerturbationConfig(seed=3),
+        )
+
+        self.assertEqual(environment._p.reset_calls, [10, 20])
+        self.assertEqual(environment._p.collision_detection_calls, 1)
+        self.assertFalse(result["friction_varied"])
+        self.assertEqual(result["xy_position_jitter_m"], 0.001)
+        self.assertEqual(result["yaw_jitter_degrees"], 0.5)
+        for item in result["objects"]:
+            self.assertLessEqual(max(abs(value) for value in item["delta_xy_m"]), 0.001)
+            self.assertLessEqual(abs(item["delta_yaw_degrees"]), 0.5)
+            self.assertNotIn("friction_scale", item)
+        for record in object_records:
+            position = np.asarray(environment._p.poses[record["instance_id"]][0])
+            self.assertTrue(np.allclose(record["world_aabb"][0], position - 0.1))
+            self.assertTrue(np.allclose(record["world_aabb"][1], position + 0.1))
+
+    def test_static_contact_threshold_sensitivity_rebuilds_scores_and_eligibility(self) -> None:
+        def trajectory(target_id, source_id, source_distance, fixed_distance=None):
+            fixed = (
+                {"shelf": {"minimum_signed_distance_m": fixed_distance}}
+                if fixed_distance is not None
+                else {}
+            )
+            return {
+                "trajectory_id": "{}/candidate".format(target_id),
+                "grasp_id": "candidate",
+                "target_instance_id": target_id,
+                "weight": 1.0,
+                "kinematically_feasible": True,
+                "action_stages": ["approach"],
+                "stages": {"approach": {"sample_count": 2}},
+                "metadata": {
+                    "contact_evidence_by_stage": {
+                        "approach": {
+                            "instances": {
+                                str(source_id): {
+                                    "minimum_signed_distance_m": source_distance
+                                }
+                            },
+                            "fixed_environment": fixed,
+                        }
+                    }
+                },
+            }
+
+        scene = {
+            "schema": "action_conditioned_scene_relation_oracle_v0",
+            "sample_id": "0/example",
+            "node_order_instance_ids": [10, 20],
+            "binary_threshold": 0.4,
+            "relation_target": {
+                "method": "action_conditioned_carried_geometry_oracle_v1",
+                "score_definition": "toy",
+            },
+            "oracle_context": {},
+            "targets": [
+                {"trajectories": [trajectory(10, 20, -0.0015)]},
+                {"trajectories": [trajectory(20, 10, -0.004, -0.0025)]},
+            ],
+        }
+
+        frozen = rethreshold_static_oracle_contact_evidence(
+            scene, hard_penetration_m=0.002
+        )
+        looser = rethreshold_static_oracle_contact_evidence(
+            scene, hard_penetration_m=0.003
+        )
+
+        self.assertEqual(frozen["score_matrix"], [[None, None], [0.0, None]])
+        self.assertEqual(looser["score_matrix"], [[None, 1.0], [0.0, None]])
+        self.assertFalse(frozen["score_valid_mask"][0][1])
+        self.assertTrue(looser["score_valid_mask"][0][1])
+
     def test_cnabu_sparse_support_converts_to_runtime_world_aabbs_without_gt(self) -> None:
         class FakeHeightmapGeneration:
             bounds = np.asarray([[-0.5, 0.5], [0.0, 2.0], [0.0, 2.0]])

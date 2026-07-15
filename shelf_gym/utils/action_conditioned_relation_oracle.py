@@ -62,6 +62,15 @@ class CounterfactualRandomizationConfig:
     friction_scale_max: float = 1.1
 
 
+@dataclass(frozen=True)
+class StaticOraclePerturbationConfig:
+    """Pose/yaw-only perturbation for relation-score stability audits."""
+
+    seed: int = 0
+    xy_position_jitter_m: float = 0.001
+    yaw_jitter_degrees: float = 0.5
+
+
 def merge_instance_stack(instance_stack: Any, background_value: int = -1) -> np.ndarray:
     stack = np.asarray(instance_stack)
     if stack.ndim == 2:
@@ -1775,6 +1784,7 @@ def evaluate_saved_scene(
     *,
     pre_action_dir: Path | str,
     config: Optional[OracleActionFamilyConfig] = None,
+    static_pose_yaw_perturbation: Optional[StaticOraclePerturbationConfig] = None,
 ) -> Tuple[Dict[str, Any], Dict[str, Dict[str, Any]]]:
     """Replay and evaluate one saved scene without executing or writing actions."""
 
@@ -1782,6 +1792,13 @@ def evaluate_saved_scene(
     started = time.perf_counter()
     pre_action = Path(pre_action_dir)
     object_records = restore_saved_scene(env, pre_action)
+    perturbation_record = None
+    if static_pose_yaw_perturbation is not None:
+        perturbation_record = apply_static_oracle_pose_yaw_perturbation(
+            env,
+            object_records=object_records,
+            config=static_pose_yaw_perturbation,
+        )
     env.reset_robot(env.initial_parameters)
     env.move_gripper(0.085)
     initial_arm_config = np.asarray(env.get_current_joint_config(), dtype=np.float64)
@@ -1834,6 +1851,8 @@ def evaluate_saved_scene(
                 "target poses"
             ),
             "scene_replay_id_alignment": "exact_set_match",
+            "static_pose_yaw_perturbation": perturbation_record,
+            "static_score_friction_varied": False,
         },
     )
     geometry = build_geometry_pseudo_gt_adjacency(object_records)
@@ -2172,6 +2191,185 @@ def apply_counterfactual_randomization(
     }
 
 
+def apply_static_oracle_pose_yaw_perturbation(
+    env: Any,
+    *,
+    object_records: Sequence[Dict[str, Any]],
+    config: StaticOraclePerturbationConfig,
+) -> Dict[str, Any]:
+    """Apply deterministic score-audit pose/yaw jitter without touching dynamics.
+
+    The records' world AABBs are refreshed after the perturbation so target
+    candidate waypoints follow the perturbed target rather than its saved pose.
+    """
+
+    xy_jitter = float(config.xy_position_jitter_m)
+    yaw_jitter = float(config.yaw_jitter_degrees)
+    if (
+        not math.isfinite(xy_jitter)
+        or not math.isfinite(yaw_jitter)
+        or xy_jitter < 0.0
+        or yaw_jitter < 0.0
+    ):
+        raise ValueError("static score pose/yaw jitter ranges must be finite and non-negative")
+    by_id = {int(item["instance_id"]): item for item in object_records}
+    if len(by_id) != len(object_records):
+        raise ValueError("static score perturbation object ids must be unique")
+    rng = np.random.default_rng(int(config.seed))
+    perturbations: List[Dict[str, Any]] = []
+    for instance_id in sorted(by_id):
+        position, orientation = env._p.getBasePositionAndOrientation(
+            instance_id,
+            physicsClientId=env.client_id,
+        )
+        euler = list(env._p.getEulerFromQuaternion(orientation))
+        delta_xy = rng.uniform(-xy_jitter, xy_jitter, size=2)
+        delta_yaw_degrees = float(rng.uniform(-yaw_jitter, yaw_jitter))
+        new_position = [
+            float(position[0] + delta_xy[0]),
+            float(position[1] + delta_xy[1]),
+            float(position[2]),
+        ]
+        euler[2] = float(euler[2] + math.radians(delta_yaw_degrees))
+        new_orientation = env._p.getQuaternionFromEuler(euler)
+        env._p.resetBasePositionAndOrientation(
+            instance_id,
+            new_position,
+            new_orientation,
+            physicsClientId=env.client_id,
+        )
+        perturbations.append(
+            {
+                "instance_id": int(instance_id),
+                "delta_xy_m": [float(value) for value in delta_xy],
+                "delta_yaw_degrees": delta_yaw_degrees,
+            }
+        )
+    env._p.performCollisionDetection(physicsClientId=env.client_id)
+    for instance_id, record in by_id.items():
+        lower, upper = env._p.getAABB(
+            instance_id,
+            physicsClientId=env.client_id,
+        )
+        record["world_aabb"] = [
+            [float(value) for value in lower],
+            [float(value) for value in upper],
+        ]
+    return {
+        "schema": "static_oracle_pose_yaw_perturbation_v1",
+        "seed": int(config.seed),
+        "xy_position_jitter_m": xy_jitter,
+        "yaw_jitter_degrees": yaw_jitter,
+        "friction_varied": False,
+        "objects": perturbations,
+    }
+
+
+def rethreshold_static_oracle_contact_evidence(
+    scene_record: Mapping[str, Any],
+    *,
+    hard_penetration_m: float,
+) -> Dict[str, Any]:
+    """Rebuild relation scores from stored minimum distances at one threshold.
+
+    This is a read-only sensitivity calculation over already sampled static
+    collision configurations.  It does not rerun PyBullet and must not be
+    interpreted as dynamic counterfactual evidence.
+    """
+
+    threshold = float(hard_penetration_m)
+    if not math.isfinite(threshold) or threshold < 0.0:
+        raise ValueError("hard_penetration_m must be finite and non-negative")
+    instance_ids = [int(value) for value in scene_record.get("node_order_instance_ids", [])]
+    if not instance_ids:
+        raise ValueError("scene_record must contain node_order_instance_ids")
+    observations: List[Dict[str, Any]] = []
+    for target in scene_record.get("targets", []):
+        for trajectory in target.get("trajectories", []):
+            metadata = dict(trajectory.get("metadata") or {})
+            contact_by_stage = dict(metadata.get("contact_evidence_by_stage") or {})
+            stage_records = dict(trajectory.get("stages") or {})
+            stage_names = list(trajectory.get("action_stages") or stage_records)
+            collision_counts: Dict[str, Dict[int, int]] = {}
+            fixed_counts: Dict[str, int] = {}
+            sample_counts: Dict[str, int] = {}
+            for stage in stage_names:
+                stage_evidence = dict(contact_by_stage.get(stage) or {})
+                instance_evidence = dict(stage_evidence.get("instances") or {})
+                fixed_evidence = dict(stage_evidence.get("fixed_environment") or {})
+                collision_counts[str(stage)] = {
+                    int(instance_id): 1
+                    for instance_id, evidence in instance_evidence.items()
+                    if evidence.get("minimum_signed_distance_m") is not None
+                    and float(evidence["minimum_signed_distance_m"]) < -threshold
+                }
+                fixed_counts[str(stage)] = int(
+                    any(
+                        evidence.get("minimum_signed_distance_m") is not None
+                        and float(evidence["minimum_signed_distance_m"]) < -threshold
+                        for evidence in fixed_evidence.values()
+                    )
+                )
+                original_sample_count = int(
+                    dict(stage_records.get(stage) or {}).get("sample_count", 0)
+                )
+                sample_counts[str(stage)] = max(
+                    original_sample_count,
+                    fixed_counts[str(stage)],
+                    max(collision_counts[str(stage)].values(), default=0),
+                )
+            observations.append(
+                evaluate_collision_trajectory(
+                    trajectory_id=str(trajectory["trajectory_id"]),
+                    grasp_id=trajectory.get("grasp_id"),
+                    target_instance_id=int(trajectory["target_instance_id"]),
+                    stage_collision_sample_counts=collision_counts,
+                    stage_sample_counts=sample_counts,
+                    fixed_environment_collision_sample_counts=fixed_counts,
+                    weight=float(trajectory.get("weight", 1.0)),
+                    kinematically_feasible=bool(
+                        trajectory.get("kinematically_feasible", False)
+                    ),
+                    metadata={
+                        **metadata,
+                        "rethresholded_hard_penetration_m": threshold,
+                        "rethresholded_from_minimum_signed_distances": True,
+                    },
+                )
+            )
+    context = dict(scene_record.get("oracle_context") or {})
+    action_family = dict(context.get("action_family") or {})
+    action_family["hard_penetration_m"] = threshold
+    return build_action_conditioned_oracle_record(
+        sample_id=str(scene_record.get("sample_id") or ""),
+        instance_ids=instance_ids,
+        trajectories=observations,
+        binary_threshold=float(scene_record.get("binary_threshold", 0.4)),
+        target_method=str(
+            dict(scene_record.get("relation_target") or {}).get(
+                "method", ACTION_CONDITIONED_TARGET_METHOD_V1
+            )
+        ),
+        score_definition=str(
+            dict(scene_record.get("relation_target") or {}).get(
+                "score_definition",
+                "weighted fraction of eligible paths with hard penetration",
+            )
+        ),
+        robot=dict(context.get("robot") or {}),
+        gripper=dict(context.get("gripper") or {}),
+        shelf_opening=dict(context.get("shelf_opening") or {}),
+        action_family=action_family,
+        voxel_grid=dict(context.get("voxel_grid") or {}),
+        metadata={
+            "source_scene_schema": scene_record.get("schema"),
+            "rethresholded_hard_penetration_m": threshold,
+            "rethresholded_from_stored_static_contact_evidence": True,
+            "runs_pybullet_replay": False,
+        },
+    )
+
+
 def execute_forced_attachment_extraction_trial(
     env: Any,
     *,
@@ -2496,7 +2694,9 @@ def evaluate_counterfactual_candidate(
 __all__ = [
     "OracleActionFamilyConfig",
     "CounterfactualRandomizationConfig",
+    "StaticOraclePerturbationConfig",
     "apply_counterfactual_randomization",
+    "apply_static_oracle_pose_yaw_perturbation",
     "aggregate_prototype_records",
     "build_candidate_planner_swept_features",
     "build_geometry_pseudo_gt_adjacency",
@@ -2517,6 +2717,7 @@ __all__ = [
     "list_counterfactual_candidates",
     "merge_instance_stack",
     "render_scene_oracle_debug",
+    "rethreshold_static_oracle_contact_evidence",
     "restore_saved_scene",
     "summarize_extraction_progress",
     "summarize_monitored_displacement",

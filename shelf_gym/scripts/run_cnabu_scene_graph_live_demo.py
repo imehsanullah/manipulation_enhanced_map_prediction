@@ -17,9 +17,13 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import socket
+import subprocess
 import sys
+import tempfile
 import time
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence
@@ -36,6 +40,7 @@ from scene_graph_mem.runtime.cnabu_learned_component_splitter import (
 from scene_graph_mem.runtime.cnabu_scene_graph import (
     DEFAULT_YCB_CLASS_NAMES,
     build_blocks_access_edges,
+    decode_binary_mask_rle,
     encode_binary_mask_rle,
     predict_scene_graph_from_cnabu,
 )
@@ -47,12 +52,39 @@ from scene_graph_mem.runtime.cnabu_scene_graph_viz import (
     render_cnabu_context_background,
     render_cnabu_scene_graph_research_view,
 )
+from scene_graph_mem.relations.path_aligned_features import (
+    reconstruct_sparse_node_voxel_support,
+)
 from shelf_gym.utils.model_evaluation_utils import get_igs_for_map, get_subsequent_igs_for_map
 from shelf_gym.utils.pushing_utils import execute_push
+from shelf_gym.utils.action_conditioned_relation_oracle import (
+    build_cnabu_runtime_candidate_action_mask,
+)
 
 
 THESIS_ROOT = Path("/home/user/ehsanullahm1/thesis")
 DEFAULT_DIAGNOSTICS_PARENT = THESIS_ROOT / "thesis_records" / "diagnostics"
+DEFAULT_RANKED_RELATION_CONFIG = (
+    THESIS_ROOT
+    / "scene_graph_mem/configs/cnabu/"
+    "scene_graph_action_v1_candidate_planner_evidence_hybrid_planner_swept_path_resolved.yaml"
+)
+DEFAULT_RANKED_RELATION_CHECKPOINT = (
+    THESIS_ROOT
+    / "scene_graph_mem/checkpoints/"
+    "cnabu_action_relation_v1_340_fresh_planner_swept_path_resolved_seed1_20260715/"
+    "model_best_validation.pth"
+)
+DEFAULT_RANKED_RELATION_THRESHOLD = 0.9
+DEFAULT_SCENE_GRAPH_PYTHON = Path(
+    "/home/user/ehsanullahm1/miniconda3/envs/scene_graph_mem/bin/python"
+)
+DEFAULT_RANKED_RELATION_BRIDGE = (
+    THESIS_ROOT / "scene_graph_mem/tools/serve_ranked_relation_advisory.py"
+)
+CNABU_CANDIDATE_TRAJECTORY_RANKED_RELATION_V2_SCHEMA = (
+    "cnabu_candidate_trajectory_ranked_relation_v2"
+)
 RAW_SHAPE_HW = (140, 200)
 CROP_ROWS = (10, 130)
 # The physical shelf spans approximately x=20..180 and y=40..118 in the
@@ -276,6 +308,253 @@ def _to_numpy_cpu(value: Any) -> np.ndarray:
     if hasattr(value, "get") and callable(value.get):
         return np.asarray(value.get())
     return np.asarray(value)
+
+
+def cnabu_mean_arrays_from_live_belief(
+    occupancy_distribution: Any,
+    semantic_concentration: Any,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Convert the live interleaved CNABU beliefs into finite mean arrays."""
+
+    occupancy = _to_numpy_cpu(occupancy_distribution)
+    semantic = _to_numpy_cpu(semantic_concentration)
+    while occupancy.ndim > 3 and occupancy.shape[0] == 1:
+        occupancy = occupancy[0]
+    while semantic.ndim > 3 and semantic.shape[0] == 1:
+        semantic = semantic[0]
+    if occupancy.ndim != 3 or occupancy.shape[0] % 2 != 0:
+        raise ValueError(
+            "live occupancy distribution must have interleaved beta/alpha shape [2Z,H,W]"
+        )
+    if semantic.ndim != 3 or semantic.shape[1:] != occupancy.shape[1:]:
+        raise ValueError(
+            "live semantic concentration must have shape [K,H,W] aligned with occupancy"
+        )
+    occupancy = np.asarray(occupancy, dtype=np.float64)
+    semantic = np.asarray(semantic, dtype=np.float64)
+    if (
+        not np.isfinite(occupancy).all()
+        or not np.isfinite(semantic).all()
+        or np.any(occupancy < 0.0)
+        or np.any(semantic < 0.0)
+    ):
+        raise ValueError("live CNABU belief parameters must be finite and non-negative")
+    beta = occupancy[0::2]
+    alpha = occupancy[1::2]
+    occupancy_mean = alpha / np.maximum(alpha + beta, 1.0e-8)
+    semantic_mean = semantic / np.maximum(semantic.sum(axis=0, keepdims=True), 1.0e-8)
+    return (
+        occupancy_mean.astype(np.float32, copy=False),
+        semantic_mean.astype(np.float32, copy=False),
+    )
+
+
+@dataclass
+class RankedRelationAdvisoryRuntime:
+    """Persistent cross-environment relation bridge; never an action executor."""
+
+    config_path: Path
+    checkpoint_path: Path
+    threshold: float
+    top_k: int
+    target_node_id: Optional[int]
+    device: str
+    python_executable: Path = DEFAULT_SCENE_GRAPH_PYTHON
+    bridge_script: Path = DEFAULT_RANKED_RELATION_BRIDGE
+    environment: Any = None
+    process: Optional[subprocess.Popen[str]] = None
+    checkpoint_load: Optional[Mapping[str, Any]] = None
+    bridge_resource_after_load: Optional[Mapping[str, Any]] = None
+    load_seconds: float = 0.0
+    request_count: int = 0
+
+    def _read_protocol_message(self, *, request_id: Optional[str] = None) -> Dict[str, Any]:
+        if self.process is None or self.process.stdout is None:
+            raise RuntimeError("ranked relation bridge is not running")
+        while True:
+            line = self.process.stdout.readline()
+            if line == "":
+                code = self.process.poll()
+                raise RuntimeError(
+                    "ranked relation bridge closed unexpectedly with code {}".format(code)
+                )
+            try:
+                message = json.loads(line)
+            except json.JSONDecodeError:
+                print("ranked relation bridge: {}".format(line.rstrip()), file=sys.stderr)
+                continue
+            if message.get("protocol") != "cnabu_ranked_relation_bridge_v1":
+                continue
+            if request_id is not None and message.get("request_id") != request_id:
+                continue
+            return dict(message)
+
+    def start(self) -> None:
+        if self.process is not None:
+            raise RuntimeError("ranked relation bridge is already started")
+        for path, label in (
+            (self.python_executable, "scene_graph_mem Python"),
+            (self.bridge_script, "ranked relation bridge"),
+            (self.config_path, "ranked relation config"),
+            (self.checkpoint_path, "ranked relation checkpoint"),
+        ):
+            if not Path(path).is_file():
+                raise FileNotFoundError("missing {}: {}".format(label, path))
+        command = [
+            str(self.python_executable),
+            str(self.bridge_script),
+            "--config-file",
+            str(self.config_path),
+            "--checkpoint",
+            str(self.checkpoint_path),
+            "--device",
+            str(self.device),
+            "--threshold",
+            str(float(self.threshold)),
+        ]
+        started = time.perf_counter()
+        self.process = subprocess.Popen(
+            command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            cwd=str(THESIS_ROOT / "scene_graph_mem"),
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        )
+        ready = self._read_protocol_message()
+        if ready.get("status") != "ready":
+            raise RuntimeError(
+                "ranked relation bridge failed to start: {}".format(ready.get("error"))
+            )
+        self.load_seconds = float(time.perf_counter() - started)
+        self.checkpoint_load = dict(ready["checkpoint_load"])
+        self.bridge_resource_after_load = dict(ready["resource"])
+
+    def close(self) -> None:
+        process = self.process
+        self.process = None
+        if process is None:
+            return
+        if process.poll() is None and process.stdin is not None:
+            try:
+                process.stdin.write(
+                    json.dumps(
+                        {
+                            "protocol": "cnabu_ranked_relation_bridge_v1",
+                            "command": "shutdown",
+                        }
+                    )
+                    + "\n"
+                )
+                process.stdin.flush()
+                process.wait(timeout=30)
+            except (BrokenPipeError, subprocess.TimeoutExpired):
+                process.terminate()
+                process.wait(timeout=10)
+
+    def predict(
+        self,
+        *,
+        graph: Mapping[str, Any],
+        inputs: Mapping[str, Any],
+    ) -> Dict[str, Any]:
+        if self.environment is None:
+            raise RuntimeError("ranked advisory environment is not initialized")
+        if self.process is None or self.process.stdin is None:
+            raise RuntimeError("ranked relation bridge is not started")
+        started = time.perf_counter()
+        graph_nodes = list(graph.get("nodes") or [])
+        if len(graph_nodes) < 2:
+            return {
+                "schema": "mem_cnabu_ranked_relation_advisory_v1",
+                "available": False,
+                "unavailable_reason": "fewer_than_two_runtime_nodes",
+                "executes_action": False,
+                "timing_seconds": float(time.perf_counter() - started),
+            }
+        occupancy_mean, semantic_mean = cnabu_mean_arrays_from_live_belief(
+            inputs["occupancy_distribution"],
+            inputs["semantic_concentration"],
+        )
+        crop_rows = tuple(int(value) for value in inputs["crop_rows"])
+        node_ids = tuple(
+            int(node.get("component_id", node.get("id"))) for node in graph_nodes
+        )
+        node_classes = tuple(int(node["class_id"]) for node in graph_nodes)
+        node_masks = np.stack(
+            [decode_binary_mask_rle(node["mask"]) for node in graph_nodes], axis=0
+        )
+        support = reconstruct_sparse_node_voxel_support(
+            occupancy_mean,
+            semantic_mean,
+            node_masks,
+            node_classes,
+            crop_rows=crop_rows,
+        )
+        action_mask = build_cnabu_runtime_candidate_action_mask(
+            self.environment,
+            self.environment.smg.hg,
+            support.indices_zyx,
+            crop_rows=crop_rows,
+            node_ids=node_ids,
+            initial_arm_config=np.asarray(
+                self.environment.get_current_joint_config(), dtype=np.float64
+            ),
+            support_boundary_quantile=0.05,
+            include_planner_swept_features=True,
+        )
+        self.request_count += 1
+        request_id = "live_ranked_{:06d}".format(self.request_count)
+        with tempfile.TemporaryDirectory(prefix="cnabu_ranked_relation_") as tmp:
+            temporary_dir = Path(tmp)
+            input_path = temporary_dir / "runtime_inputs.npz"
+            graph_path = temporary_dir / "runtime_graph.json"
+            action_mask_path = temporary_dir / "candidate_action_mask.json"
+            output_path = temporary_dir / "ranked_advisory.json"
+            np.savez_compressed(
+                input_path,
+                occupancy_mean=occupancy_mean,
+                semantic_mean=semantic_mean,
+                crop_rows=np.asarray(crop_rows, dtype=np.int64),
+                raw_shape_hw=np.asarray(inputs["raw_shape_hw"], dtype=np.int64),
+            )
+            write_json(graph_path, graph)
+            write_json(action_mask_path, action_mask)
+            request = {
+                "protocol": "cnabu_ranked_relation_bridge_v1",
+                "command": "predict",
+                "request_id": request_id,
+                "input_npz": str(input_path),
+                "runtime_graph_json": str(graph_path),
+                "candidate_action_mask_json": str(action_mask_path),
+                "output_json": str(output_path),
+                "image_id": str(inputs["sample_id"]),
+                "target_node_id": self.target_node_id,
+                "top_k": int(self.top_k),
+            }
+            self.process.stdin.write(json.dumps(request, allow_nan=False) + "\n")
+            self.process.stdin.flush()
+            response = self._read_protocol_message(request_id=request_id)
+            if response.get("status") != "complete":
+                raise RuntimeError(
+                    "ranked relation bridge prediction failed: {}".format(
+                        response.get("error")
+                    )
+                )
+            advisory = json.loads(output_path.read_text(encoding="utf-8"))
+        advisory["timing_seconds"] = float(time.perf_counter() - started)
+        advisory["bridge_inference_seconds"] = response.get("elapsed_seconds")
+        advisory["bridge_resource_after_inference"] = dict(
+            response.get("resource") or {}
+        )
+        advisory["checkpoint_load"] = dict(self.checkpoint_load or {})
+        advisory["cross_environment_bridge"] = {
+            "runtime_python": sys.executable,
+            "relation_python": str(self.python_executable),
+            "reason": "manipulation_map does not provide detectron2; model inference stays in scene_graph_mem",
+        }
+        return advisory
 
 
 def _align_gt_to_raw_view(
@@ -785,6 +1064,25 @@ def process_graph_update(
         splitter=splitter,
     )
     graph["metadata"]["update_kind"] = str(update_kind)
+    ranked_advisory: Optional[Dict[str, Any]] = None
+    ranked_runtime = getattr(args, "_ranked_relation_runtime", None)
+    if ranked_runtime is not None:
+        ranked_advisory = ranked_runtime.predict(graph=graph, inputs=inputs)
+        graph["ranked_relation_advisory"] = ranked_advisory
+        graph["metadata"].update(
+            {
+                "ranked_relation_advisory_enabled": True,
+                "ranked_relation_advisory_executes_action": False,
+                "ranked_relation_schema": (
+                    ranked_advisory.get("canonical_ranked_relation", {}).get("schema")
+                    if ranked_advisory.get("available")
+                    else None
+                ),
+            }
+        )
+        graph_timing["ranked_relation_advisory"] = float(
+            ranked_advisory["timing_seconds"]
+        )
     counts = graph_counts(graph)
     if counts["uses_gt"] or counts["requires_gt"] or counts["uses_simulator_instance_labels"]:
         raise RuntimeError(f"graph input safety violation at update {update_index}: {counts}")
@@ -861,6 +1159,26 @@ def process_graph_update(
         "png_path": str(png_path) if png_path is not None else None,
         "belief_png_path": str(belief_png_path) if belief_png_path is not None else None,
     }
+    if ranked_advisory is not None:
+        record["ranked_relation_advisory"] = {
+            "available": bool(ranked_advisory.get("available", False)),
+            "unavailable_reason": ranked_advisory.get("unavailable_reason"),
+            "selected_target_node_id": ranked_advisory.get(
+                "selected_target_node_id"
+            ),
+            "target_blockage_probability": ranked_advisory.get(
+                "target_blockage_probability"
+            ),
+            "target_accessibility_probability": ranked_advisory.get(
+                "target_accessibility_probability"
+            ),
+            "top_blocker_node_ids": [
+                blocker["source_node_id"]
+                for blocker in ranked_advisory.get("top_blockers", [])
+            ],
+            "timing_seconds": ranked_advisory.get("timing_seconds"),
+            "executes_action": False,
+        }
     if extra_record:
         record.update(dict(extra_record))
     summary["updates"].append(record)
@@ -1361,6 +1679,10 @@ def write_summary(path: Path, summary: Mapping[str, Any]) -> None:
         f"Command: `{summary['command']}`",
         f"Mode: `{summary['mode']}`",
         f"Checkpoint: `{summary.get('checkpoint')}`",
+        f"Ranked relation advisory: `{summary.get('ranked_relation_advisory_enabled', False)}`",
+        f"Ranked relation checkpoint: `{summary.get('ranked_relation_checkpoint')}`",
+        f"Ranked relation config: `{summary.get('ranked_relation_config')}`",
+        f"Ranked relation threshold: `{summary.get('ranked_relation_threshold')}`",
         f"Updates requested: `{summary['updates_requested']}`",
         f"Updates completed: `{summary['updates_completed']}`",
         f"Render PyBullet: `{summary['render']}`",
@@ -1385,6 +1707,7 @@ def write_summary(path: Path, summary: Mapping[str, Any]) -> None:
         f"- Training run: `{summary['training_run']}`",
         f"- Dataset export written: `{summary['dataset_export_written']}`",
         f"- Checkpoint/model artifact written: `{summary['checkpoint_model_artifact_written']}`",
+        f"- Ranked advisory executes action: `{summary.get('ranked_relation_executes_action', False)}`",
         "",
         "## Live Tensor Shapes",
         "",
@@ -1520,6 +1843,32 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--sleep-sec", type=float, default=0.1)
     parser.add_argument("--hold-sec", type=float, default=0.0)
     parser.add_argument("--device", default="cpu", help="Device for learned splitter inference.")
+    parser.add_argument(
+        "--enable-ranked-relations",
+        action="store_true",
+        help=(
+            "Opt in to advisory target-local blocker ranking; this never executes "
+            "a removal or manipulation action."
+        ),
+    )
+    parser.add_argument(
+        "--ranked-relation-config",
+        type=Path,
+        default=DEFAULT_RANKED_RELATION_CONFIG,
+    )
+    parser.add_argument(
+        "--ranked-relation-checkpoint",
+        type=Path,
+        default=DEFAULT_RANKED_RELATION_CHECKPOINT,
+    )
+    parser.add_argument(
+        "--ranked-relation-threshold",
+        type=float,
+        default=DEFAULT_RANKED_RELATION_THRESHOLD,
+    )
+    parser.add_argument("--ranked-relation-device", default="cpu")
+    parser.add_argument("--ranked-target-node-id", type=int, default=None)
+    parser.add_argument("--ranked-top-k", type=int, default=3)
     parser.add_argument("--max-obj-num", type=int, default=12)
     parser.add_argument("--occupancy-threshold", type=float, default=0.35)
     parser.add_argument("--push-num-points", type=int, default=30)
@@ -1532,6 +1881,14 @@ def main() -> int:
     args = build_arg_parser().parse_args()
     if bool(args.policy_loop) and bool(args.enable_push):
         raise ValueError("--policy-loop and --enable-push are separate modes; choose one")
+    if bool(args.enable_ranked_relations) and args.scene_graph_mode != "learned_component_splitter":
+        raise ValueError(
+            "--enable-ranked-relations requires learned_component_splitter runtime nodes"
+        )
+    if not 0.0 <= float(args.ranked_relation_threshold) <= 1.0:
+        raise ValueError("--ranked-relation-threshold must be in [0,1]")
+    if int(args.ranked_top_k) <= 0:
+        raise ValueError("--ranked-top-k must be positive")
     updates = int(args.action_budget) if bool(args.policy_loop) else (3 if bool(args.enable_push) else int(args.updates))
     viewpoints = parse_viewpoints(args.viewpoints, updates=updates)
     diagnostics_dir = args.diagnostics_dir or default_diagnostics_dir()
@@ -1546,6 +1903,27 @@ def main() -> int:
         checkpoint_load_seconds = float(splitter.load_seconds)
         d3g_runtime_helpers_imported = True
 
+    ranked_relation_runtime: Optional[RankedRelationAdvisoryRuntime] = None
+    ranked_relation_checkpoint_load_seconds = 0.0
+    ranked_relation_checkpoint_load: Optional[Mapping[str, Any]] = None
+    ranked_relation_bridge_resource_after_load: Optional[Mapping[str, Any]] = None
+    if bool(args.enable_ranked_relations):
+        ranked_relation_runtime = RankedRelationAdvisoryRuntime(
+            config_path=args.ranked_relation_config.resolve(),
+            checkpoint_path=args.ranked_relation_checkpoint.resolve(),
+            threshold=float(args.ranked_relation_threshold),
+            top_k=int(args.ranked_top_k),
+            target_node_id=args.ranked_target_node_id,
+            device=str(args.ranked_relation_device),
+        )
+        ranked_relation_runtime.start()
+        ranked_relation_checkpoint_load_seconds = ranked_relation_runtime.load_seconds
+        ranked_relation_checkpoint_load = ranked_relation_runtime.checkpoint_load
+        ranked_relation_bridge_resource_after_load = (
+            ranked_relation_runtime.bridge_resource_after_load
+        )
+    setattr(args, "_ranked_relation_runtime", ranked_relation_runtime)
+
     summary: Dict[str, Any] = {
         "schema": "mem_cnabu_scene_graph_live_demo_v0",
         "created_at": datetime.now().isoformat(timespec="seconds"),
@@ -1554,6 +1932,32 @@ def main() -> int:
         "mode": str(args.scene_graph_mode),
         "checkpoint": str(args.checkpoint) if args.scene_graph_mode == "learned_component_splitter" else None,
         "checkpoint_load_seconds": checkpoint_load_seconds,
+        "ranked_relation_advisory_enabled": bool(args.enable_ranked_relations),
+        "ranked_relation_executes_action": False,
+        "ranked_relation_config": (
+            str(args.ranked_relation_config) if args.enable_ranked_relations else None
+        ),
+        "ranked_relation_checkpoint": (
+            str(args.ranked_relation_checkpoint)
+            if args.enable_ranked_relations
+            else None
+        ),
+        "ranked_relation_checkpoint_load": (
+            dict(ranked_relation_checkpoint_load)
+            if ranked_relation_checkpoint_load is not None
+            else None
+        ),
+        "ranked_relation_checkpoint_load_seconds": (
+            ranked_relation_checkpoint_load_seconds
+        ),
+        "ranked_relation_bridge_resource_after_load": (
+            dict(ranked_relation_bridge_resource_after_load)
+            if ranked_relation_bridge_resource_after_load is not None
+            else None
+        ),
+        "ranked_relation_threshold": float(args.ranked_relation_threshold),
+        "ranked_target_node_id": args.ranked_target_node_id,
+        "ranked_top_k": int(args.ranked_top_k),
         "updates_requested": updates,
         "updates_completed": 0,
         "viewpoints": viewpoints,
@@ -1619,6 +2023,8 @@ def main() -> int:
             max_obj_num=int(args.max_obj_num),
             max_occupancy_threshold=float(args.occupancy_threshold),
         )
+        if ranked_relation_runtime is not None:
+            ranked_relation_runtime.environment = mem
         summary["environment_init_seconds"] = float(time.perf_counter() - init_started)
         reset_started = time.perf_counter()
         mem.reset_env(occupancy_threshold=float(args.occupancy_threshold))
@@ -1833,6 +2239,8 @@ def main() -> int:
     finally:
         if graph_window_open:
             cv2.destroyWindow(window_name)
+        if ranked_relation_runtime is not None:
+            ranked_relation_runtime.close()
         if mem is not None:
             mem.close()
 
