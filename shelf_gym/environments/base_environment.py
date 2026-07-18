@@ -13,6 +13,7 @@ import pybullet_data
 import numpy as np 
 import pkgutil
 import sys
+import os
 
 class BasePybulletEnv(gym.Env):
     def __init__(self, render=False, shared_memory=False, hz=240):
@@ -44,7 +45,10 @@ class BasePybulletEnv(gym.Env):
             print("I will render")
             render_option = p.GUI
 
-        self._p = bullet_client.BulletClient(connection_mode=render_option)
+        self._p = bullet_client.BulletClient(
+            connection_mode=render_option,
+            options=os.environ.get("SHELF_GYM_PYBULLET_OPTIONS", ""),
+        )
         self._urdfRoot = pybullet_data.getDataPath()
         self._p.setAdditionalSearchPath(self._urdfRoot)
 

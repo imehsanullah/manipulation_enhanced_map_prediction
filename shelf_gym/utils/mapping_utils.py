@@ -4,6 +4,35 @@ import numpy as np
 import cupy as cp
 import open3d as o3d
 import matplotlib.pyplot as plt
+import os
+
+
+def deterministic_top_point_indices(
+    linear_pixel_indices,
+    z_values,
+    *,
+    array_module=cp,
+):
+    """Select one highest point per pixel without duplicate GPU scatter.
+
+    Ties at identical height select the later point in the unchanged input
+    order.  The returned indices are unique by linear pixel index.
+    """
+
+    linear = array_module.asarray(linear_pixel_indices)
+    z = array_module.asarray(z_values)
+    if linear.ndim != 1 or z.ndim != 1 or linear.shape != z.shape:
+        raise ValueError("linear_pixel_indices and z_values must be equal 1D arrays")
+    if int(linear.size) == 0:
+        return array_module.empty((0,), dtype=array_module.int64)
+    original_order = array_module.arange(linear.size, dtype=array_module.int64)
+    keys = array_module.stack((original_order, z, linear), axis=0)
+    order = array_module.lexsort(keys)
+    sorted_linear = linear[order]
+    group_end = array_module.empty(sorted_linear.shape, dtype=bool)
+    group_end[:-1] = sorted_linear[:-1] != sorted_linear[1:]
+    group_end[-1] = True
+    return order[group_end]
 
 class BEVMapping():
     '''
@@ -584,19 +613,34 @@ class HeightmapGeneration:
             instance = instance.reshape(480, 640)[valid]
 
 
-            # Sort 3D points by their z-values to simulate z-buffering
-            iz = np.argsort(points[:, -1])
-            points = points[iz]
-            semantic = semantic[iz]
-            instance = instance[iz]
+            if os.environ.get("SHELF_GYM_DETERMINISTIC_HEIGHTMAP") == "1":
+                px = (cp.floor((points[:, 0] - self.bounds[0, 0]) / self.pixel_size[0])).astype(cp.int32)
+                py = (cp.floor((points[:, 1] - self.bounds[1, 0]) / self.pixel_size[1])).astype(cp.int32)
+                px = cp.clip(px, 0, width - 1)
+                py = cp.clip(py, 0, height - 1)
+                selected = deterministic_top_point_indices(
+                    py.astype(cp.int64) * int(width) + px.astype(cp.int64),
+                    points[:, 2],
+                )
+                points = points[selected]
+                semantic = semantic[selected]
+                instance = instance[selected]
+                px = px[selected]
+                py = py[selected]
+            else:
+                # Historical path retained byte-for-byte in default runs.
+                iz = np.argsort(points[:, -1])
+                points = points[iz]
+                semantic = semantic[iz]
+                instance = instance[iz]
 
-            # Compute pixel indices for heightmap and semanticmap
-            px = (cp.floor((points[:, 0] - self.bounds[0, 0]) / self.pixel_size[0])).astype(cp.int32)
-            py = (cp.floor((points[:, 1] - self.bounds[1, 0]) / self.pixel_size[1])).astype(cp.int32)
+                # Compute pixel indices for heightmap and semanticmap
+                px = (cp.floor((points[:, 0] - self.bounds[0, 0]) / self.pixel_size[0])).astype(cp.int32)
+                py = (cp.floor((points[:, 1] - self.bounds[1, 0]) / self.pixel_size[1])).astype(cp.int32)
 
-            # Clip indices to avoid out-of-bound errors
-            px = cp.clip(px, 0, width - 1)
-            py = cp.clip(py, 0, height - 1)
+                # Clip indices to avoid out-of-bound errors
+                px = cp.clip(px, 0, width - 1)
+                py = cp.clip(py, 0, height - 1)
 
             # Assign height and semantic values to the maps - as well as the border pixel binary mask - True -> pixel comes from a border
             heightmap[py, px, 0] = points[:, 2] - self.bounds[2, 0]
