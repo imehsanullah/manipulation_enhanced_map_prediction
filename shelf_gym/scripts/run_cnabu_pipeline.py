@@ -187,7 +187,8 @@ class ManipulationEnhancedMapping(PushingCollection):
                         # get push candidates
                         t_push_plan = time.time()
                         push_candidates = self.get_possible_maps_push(previous_map, previous_semantic_map,
-                                                                      num_points=self.max_sampled_pushes)
+                                                                      num_points=self.max_sampled_pushes,
+                                                                      planner_camera_index=viewpoint)
 
 
                         best_push = 0
@@ -628,7 +629,14 @@ class ManipulationEnhancedMapping(PushingCollection):
         return push_data
 
 
-    def get_possible_maps_push(self, beta_map, dirichlet_map, num_points=30):
+    def get_possible_maps_push(
+        self,
+        beta_map,
+        dirichlet_map,
+        num_points=30,
+        planner_camera_index=None,
+        frontier_allocator=None,
+    ):
         """ Computes possible maps after a push action.
         AParameters
         ----------
@@ -636,6 +644,10 @@ class ManipulationEnhancedMapping(PushingCollection):
             dirichlet_map (torch.Tensor): Previous semantic dirichlet map.
             vis_debug (bool, optional): If True, visualizes the results. Defaults to False.
             num_points (int, optional): Number of push points to sample. Defaults to 30.
+            planner_camera_index (int, optional): Existing MEM-selected camera
+                query for opt-in subclasses. Ignored by original MEM.
+            frontier_allocator (optional): Opt-in fixed-budget frontier
+                allocator. ``None`` preserves original uniform sampling.
         Returns:
             dict: Dictionary containing motion parameters, semantic maps, occupancy maps, etc.
         """
@@ -648,7 +660,14 @@ class ManipulationEnhancedMapping(PushingCollection):
             push_data = self.prepare_uncertainty_informed_push_sampling(beta_map, dirichlet_map, use_semantic_distance=True, num_points=num_points)
         else:
             prob_padded = np.pad(self.get_prob_map(beta_map).cpu().numpy(), ((10, 10), (0, 0), (0, 0)), mode='constant')
-            push_data = self.ps.get_samples(env=self, occ_map=prob_padded, num_points=num_points, just_endpoints=True, verbose=False)
+            push_data = self.ps.get_samples(
+                env=self,
+                occ_map=prob_padded,
+                num_points=num_points,
+                just_endpoints=True,
+                verbose=False,
+                frontier_allocator=frontier_allocator,
+            )
 
         #Convert motion parameters to numpy
         motion_parametrization = np.array([int(x) if isinstance(x, cp.ndarray) else x for x in push_data['motion_parametrization']]).reshape(-1, 6)

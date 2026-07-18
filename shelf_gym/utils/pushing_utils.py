@@ -69,6 +69,8 @@ class PushSampler:
         self.max_push_distance = 20 # in map voxels i.e. 20*0.005 = 10 cm
         self.min_push_distance = 5 # in map voxels i.e. 5*0.005 = 2.5 cm
         self.z_in_pix = (cp.floor((0.97 - 0.91) / 0.005)).astype(cp.int32)
+        self.last_frontier_allocation = None
+        self._last_sampled_source_indices = None
 
 
     def perform_single_pushing(self, env, occ_map, samples=None, execute=False, verbose=False):
@@ -104,7 +106,77 @@ class PushSampler:
 
 
 
-    def get_samples(self, env, occ_map, samples=None, num_points=2, force_resample_idx=False, just_endpoints=False,  verbose=False):
+    def _sample_frontier_indices(self, occupied_indices, num_points, frontier_allocator=None):
+        """Draw fixed-budget frontier indices with an optional allocator.
+
+        The ``None`` branch intentionally preserves the historical
+        ``cp.random.choice`` signature exactly, including omission of ``p``.
+        """
+        if frontier_allocator is None:
+            self.last_frontier_allocation = None
+            self._last_sampled_source_indices = None
+            sampled_positions = cp.random.choice(
+                occupied_indices.shape[0], num_points, replace=False
+            )
+        else:
+            decision = frontier_allocator.sampling_probabilities(
+                cp.asnumpy(occupied_indices)
+            )
+            if decision.probabilities is None:
+                sampled_positions = cp.random.choice(
+                    occupied_indices.shape[0], num_points, replace=False
+                )
+            else:
+                sampled_positions = cp.random.choice(
+                    occupied_indices.shape[0],
+                    num_points,
+                    replace=False,
+                    p=cp.asarray(decision.probabilities),
+                )
+            self.last_frontier_allocation = frontier_allocator.selection_diagnostics(
+                decision,
+                cp.asnumpy(sampled_positions),
+            )
+            self._last_sampled_source_indices = np.asarray(
+                self.last_frontier_allocation["selected_source_indices"],
+                dtype=np.int64,
+            )
+        return occupied_indices[sampled_positions]
+
+
+    def _finalize_frontier_source_diagnostics(self, data):
+        """Move private path provenance into opt-in allocation diagnostics."""
+
+        source_indices = [
+            int(value) for value in data.pop("_frontier_source_indices", [])
+        ]
+        if self.last_frontier_allocation is not None:
+            path_count = len(data.get("paths", []))
+            if len(source_indices) != path_count:
+                raise RuntimeError(
+                    "feasible-path source provenance does not align with paths"
+                )
+            best_source = self.last_frontier_allocation.get("best_source_index")
+            self.last_frontier_allocation.update(
+                {
+                    "feasible_path_source_indices": source_indices,
+                    "feasible_named_source_count": int(
+                        sum(value >= 0 for value in source_indices)
+                    ),
+                    "feasible_unique_source_indices": sorted(
+                        set(value for value in source_indices if value >= 0)
+                    ),
+                    "best_source_has_feasible_path": (
+                        None
+                        if best_source is None
+                        else bool(int(best_source) in source_indices)
+                    ),
+                }
+            )
+        return data
+
+
+    def get_samples(self, env, occ_map, samples=None, num_points=2, force_resample_idx=False, just_endpoints=False,  verbose=False, frontier_allocator=None):
         """
         Generate random samples for pushing.
         Args:
@@ -113,6 +185,8 @@ class PushSampler:
             num_points: Number of points to sample
             force_resample_idx:
             just_endpoints: return just endpoints in path (no interpolation)
+            frontier_allocator: Optional fixed-budget probability allocator.
+                ``None`` preserves original uniform sampling exactly.
         Return:
             dict:
                 'paths': list of feasible paths
@@ -126,6 +200,10 @@ class PushSampler:
         voxel_map[:,:,int(heighest_cell/2)] = 0
 
         if samples is not None:
+            if frontier_allocator is not None:
+                raise ValueError("frontier_allocator cannot be combined with external samples")
+            self.last_frontier_allocation = None
+            self._last_sampled_source_indices = None
             sampled_indices = samples[:, 0, :]
             sampled_indices = np.hstack([sampled_indices, np.full((samples.shape[0], 1), 44)])
             new_sampling = True
@@ -134,8 +212,11 @@ class PushSampler:
             occupied_indices = self.ff.find_frontiers(voxel_map, force_resample_idx)
             occupied_indices = self.ff.filter_tall_frontiers(occupied_indices)
 
-            sampled_indices = cp.random.choice(occupied_indices.shape[0], num_points, replace=False)
-            sampled_indices = occupied_indices[sampled_indices]
+            sampled_indices = self._sample_frontier_indices(
+                occupied_indices,
+                num_points,
+                frontier_allocator=frontier_allocator,
+            )
             new_sampling = False
 
         current_joint_config = env.get_current_arm_and_gripper_joint_config()
@@ -148,16 +229,17 @@ class PushSampler:
             env.klampt_utils.add_heightmap_to_klampt(voxel_map[:,:,5:])
 
         #sample start points
-        start_data = {'start_arm_joint_configs': [], 'path_to_start_positions': [], 'start_poses': [], 'all_start_indices': []}
-        start_data = self.find_start_points(start_data, current_joint_config, env, sampled_indices, just_endpoints=just_endpoints, verbose=verbose,new_sampling = new_sampling)
+        start_data = {'start_arm_joint_configs': [], 'path_to_start_positions': [], 'start_poses': [], 'all_start_indices': [], '_frontier_source_indices': []}
+        start_data = self.find_start_points(start_data, current_joint_config, env, sampled_indices, just_endpoints=just_endpoints, verbose=verbose,new_sampling = new_sampling, frontier_source_indices=self._last_sampled_source_indices)
         env.klampt_utils.delete_heightmap_from_klampt()
 
         #return feasible start-end point combos
-        final_data = {'paths': [], 'path_annotations': [], 'motion_parametrization': []}
-        return self.find_end_points(final_data, start_data, env, voxel_map, samples=samples, just_endpoints=just_endpoints, verbose=verbose)
+        final_data = {'paths': [], 'path_annotations': [], 'motion_parametrization': [], '_frontier_source_indices': []}
+        final_data = self.find_end_points(final_data, start_data, env, voxel_map, samples=samples, just_endpoints=just_endpoints, verbose=verbose)
+        return self._finalize_frontier_source_diagnostics(final_data)
 
 
-    def  find_start_points(self, data, initial_joint_config, env, frontier_indices, just_endpoints=False, verbose=False, new_sampling=False):
+    def  find_start_points(self, data, initial_joint_config, env, frontier_indices, just_endpoints=False, verbose=False, new_sampling=False, frontier_source_indices=None):
         ''' Sample start poses from given frontier indices
         Args:
             data: Empty dictionary containing the start poses, arm joint configurations, path to start positions and all start indices
@@ -196,6 +278,11 @@ class PushSampler:
                 data['start_arm_joint_configs'].append(start_arm_joint_config)
                 data['path_to_start_positions'].append(path_to_start_position)
                 data['start_poses'].append(start_pose)
+                data['_frontier_source_indices'].append(
+                    -1
+                    if frontier_source_indices is None
+                    else int(frontier_source_indices[i])
+                )
         return data
 
 
@@ -210,9 +297,10 @@ class PushSampler:
         Return:
             dict: Dictionary containing the paths, path annotations and motion parametrization
         '''
-        for start_arm_joint_config, path_to_start_position, start_indices, start_pose \
+        for start_arm_joint_config, path_to_start_position, start_indices, start_pose, frontier_source_index \
                 in zip(start_data['start_arm_joint_configs'], start_data['path_to_start_positions'],
-                       start_data['all_start_indices'], start_data['start_poses']):
+                       start_data['all_start_indices'], start_data['start_poses'],
+                       start_data['_frontier_source_indices']):
             # sampling goal points
             reach_annotations = len(path_to_start_position) * ['pushing']
 
@@ -288,6 +376,9 @@ class PushSampler:
                     data['motion_parametrization'].extend(start_indices.tolist())
                     data['motion_parametrization'].extend([target_indices[j].flatten()[-2]])
                     data['motion_parametrization'].extend(target_indices[j, :2].flatten().tolist())
+                    data['_frontier_source_indices'].append(
+                        int(frontier_source_index)
+                    )
                     break
 
         return data
