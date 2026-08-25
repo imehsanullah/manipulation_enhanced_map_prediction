@@ -23,6 +23,10 @@ from typing import Any, Dict, Iterable, Mapping, Optional, Sequence
 
 import numpy as np
 from scipy.stats import kendalltau
+from scene_graph_mem.relations.action_conditioned_oracle import (
+    MARGIN_REFINED_RANKING_TARGET_V2,
+    build_margin_refined_ranking_labels,
+)
 
 from shelf_gym.environments.shelf_environment import ShelfEnv
 from shelf_gym.utils.action_conditioned_relation_oracle import (
@@ -57,7 +61,9 @@ def _parse_args(argv: Optional[Iterable[str]] = None) -> argparse.Namespace:
     parser.add_argument("--split-json", type=Path, default=DEFAULT_SPLIT)
     parser.add_argument("--scene-groups", nargs="+", default=list(DEFAULT_GROUPS))
     parser.add_argument("--records-per-group", type=int, default=4)
-    parser.add_argument("--perturbation-seeds", type=int, nargs="+", default=list(DEFAULT_SEEDS))
+    parser.add_argument(
+        "--perturbation-seeds", type=int, nargs="+", default=list(DEFAULT_SEEDS)
+    )
     parser.add_argument(
         "--contact-thresholds-m",
         type=float,
@@ -117,7 +123,9 @@ def select_predeclared_stability_records(
             by_group[_scene_group(sample_id)].append(record)
     selected: list[Dict[str, Any]] = []
     for group in [str(value) for value in scene_groups]:
-        options = sorted(by_group.get(group, []), key=lambda item: str(item["sample_id"]))
+        options = sorted(
+            by_group.get(group, []), key=lambda item: str(item["sample_id"])
+        )
         if len(options) < count:
             raise ValueError(
                 "scene group {} has only {} available non-test records; need {}".format(
@@ -135,6 +143,7 @@ def _threshold_key(value: float) -> str:
 
 
 def _compact_scene_variant(record: Mapping[str, Any]) -> Dict[str, Any]:
+    refined = build_margin_refined_ranking_labels(record)
     targets = []
     for target in record.get("targets", []):
         targets.append(
@@ -142,7 +151,9 @@ def _compact_scene_variant(record: Mapping[str, Any]) -> Dict[str, Any]:
                 "target_index": int(target["target_index"]),
                 "target_instance_id": int(target["target_instance_id"]),
                 "eligible_trajectory_count": int(target["eligible_trajectory_count"]),
-                "eligible_trajectory_weight": float(target["eligible_trajectory_weight"]),
+                "eligible_trajectory_weight": float(
+                    target["eligible_trajectory_weight"]
+                ),
                 "has_defined_pair_scores": bool(target["has_defined_pair_scores"]),
                 "trajectories": [
                     {
@@ -151,7 +162,9 @@ def _compact_scene_variant(record: Mapping[str, Any]) -> Dict[str, Any]:
                         "eligible_for_scoring": bool(
                             trajectory.get("eligible_for_scoring", False)
                         ),
-                        "blocked_by": [int(value) for value in trajectory.get("blocked_by", [])],
+                        "blocked_by": [
+                            int(value) for value in trajectory.get("blocked_by", [])
+                        ],
                         "blocked_by_stage": {
                             stage: [
                                 int(value)
@@ -174,6 +187,10 @@ def _compact_scene_variant(record: Mapping[str, Any]) -> Dict[str, Any]:
         "score_valid_mask": record["score_valid_mask"],
         "binary_adjacency_matrix": record["binary_adjacency_matrix"],
         "stage_score_matrices": record["stage_score_matrices"],
+        "margin_refined_ranking_target_kind": refined["target_kind"],
+        "margin_refined_ranking_score_matrix": refined["ranking_score_matrix"],
+        "margin_refined_ranking_score_valid_mask": refined["ranking_score_valid_mask"],
+        "margin_refined_ranking_audit": refined["audit"],
         "targets": targets,
     }
 
@@ -206,7 +223,9 @@ def compact_stability_scene(
     ):
         if rebuilt_frozen[name] != record[name]:
             raise AssertionError(
-                "stored contact evidence does not exactly reconstruct frozen {}".format(name)
+                "stored contact evidence does not exactly reconstruct frozen {}".format(
+                    name
+                )
             )
     object_sizes = {}
     for item in record.get("object_records", []):
@@ -221,7 +240,9 @@ def compact_stability_scene(
         "perturbation": dict(record.get("metadata") or {}).get(
             "static_pose_yaw_perturbation"
         ),
-        "runtime_seconds": float(dict(record.get("scene_summary") or {}).get("runtime_seconds", 0.0)),
+        "runtime_seconds": float(
+            dict(record.get("scene_summary") or {}).get("runtime_seconds", 0.0)
+        ),
         "friction_varied": False,
     }
 
@@ -288,7 +309,9 @@ def validate_stability_run_matching(
         raise ValueError("stability pair target/candidate identities differ")
 
 
-def _matrix_arrays(variant: Mapping[str, Any]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _matrix_arrays(
+    variant: Mapping[str, Any],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     valid = np.asarray(variant["score_valid_mask"], dtype=bool)
     scores = np.asarray(
         [
@@ -299,6 +322,20 @@ def _matrix_arrays(variant: Mapping[str, Any]) -> tuple[np.ndarray, np.ndarray, 
     )
     binary = np.asarray(variant["binary_adjacency_matrix"], dtype=bool)
     return scores, valid, binary
+
+
+def _margin_refined_matrix_arrays(
+    variant: Mapping[str, Any],
+) -> tuple[np.ndarray, np.ndarray]:
+    valid = np.asarray(variant["margin_refined_ranking_score_valid_mask"], dtype=bool)
+    scores = np.asarray(
+        [
+            [np.nan if value is None else float(value) for value in row]
+            for row in variant["margin_refined_ranking_score_matrix"]
+        ],
+        dtype=np.float64,
+    )
+    return scores, valid
 
 
 def _jaccard(left: set[int], right: set[int]) -> float:
@@ -320,14 +357,27 @@ def compare_stability_pair(
 ) -> Dict[str, Any]:
     """Return pair/query/candidate stability observations for one paired scene."""
 
-    left = reference["variants_by_hard_penetration_m"][_threshold_key(reference_threshold_m)]
-    right = perturbed["variants_by_hard_penetration_m"][_threshold_key(perturbed_threshold_m)]
+    left = reference["variants_by_hard_penetration_m"][
+        _threshold_key(reference_threshold_m)
+    ]
+    right = perturbed["variants_by_hard_penetration_m"][
+        _threshold_key(perturbed_threshold_m)
+    ]
     if left["node_order_instance_ids"] != right["node_order_instance_ids"]:
         raise ValueError("cannot compare different node orders")
     scores_left, valid_left, binary_left = _matrix_arrays(left)
     scores_right, valid_right, binary_right = _matrix_arrays(right)
+    refined_left, refined_valid_left = _margin_refined_matrix_arrays(left)
+    refined_right, refined_valid_right = _margin_refined_matrix_arrays(right)
+    if not np.array_equal(refined_valid_left, valid_left) or not np.array_equal(
+        refined_valid_right, valid_right
+    ):
+        raise ValueError("margin-refined and v1 validity masks differ")
     comparable = valid_left & valid_right
     absolute_changes = np.abs(scores_left[comparable] - scores_right[comparable])
+    refined_absolute_changes = np.abs(
+        refined_left[comparable] - refined_right[comparable]
+    )
     edge_flips = binary_left[comparable] != binary_right[comparable]
     validity_changes = valid_left != valid_right
     node_ids = list(left["node_order_instance_ids"])
@@ -348,6 +398,10 @@ def compare_stability_pair(
             "comparable_pair_count": int(np.count_nonzero(query_comparable)),
             "top_max_set_jaccard": None,
             "kendall_tau_b": None,
+            "margin_refined_score_mae": None,
+            "margin_refined_score_max_change": None,
+            "margin_refined_top_max_set_jaccard": None,
+            "margin_refined_kendall_tau_b": None,
         }
         if np.any(query_comparable):
             left_values = scores_left[query_comparable, target_index]
@@ -364,15 +418,59 @@ def compare_stability_pair(
             if float(left_values.max(initial=0.0)) > 0.0:
                 source_indices = np.flatnonzero(query_comparable)
                 left_top = set(
-                    source_indices[np.isclose(left_values, float(left_values.max()))].tolist()
+                    source_indices[
+                        np.isclose(left_values, float(left_values.max()))
+                    ].tolist()
                 )
                 right_top = set(
-                    source_indices[np.isclose(right_values, float(right_values.max()))].tolist()
+                    source_indices[
+                        np.isclose(right_values, float(right_values.max()))
+                    ].tolist()
                 )
                 row["top_max_set_jaccard"] = _jaccard(left_top, right_top)
             if np.unique(left_values).size >= 2 and np.unique(right_values).size >= 2:
                 tau = kendalltau(left_values, right_values, variant="b").statistic
                 row["kendall_tau_b"] = float(tau) if np.isfinite(tau) else None
+            refined_left_values = refined_left[query_comparable, target_index]
+            refined_right_values = refined_right[query_comparable, target_index]
+            refined_changes = np.abs(refined_left_values - refined_right_values)
+            row["margin_refined_score_mae"] = float(refined_changes.mean())
+            row["margin_refined_score_max_change"] = float(refined_changes.max())
+            if float(refined_left_values.max(initial=0.0)) > 0.0:
+                source_indices = np.flatnonzero(query_comparable)
+                refined_left_top = set(
+                    source_indices[
+                        np.isclose(
+                            refined_left_values,
+                            float(refined_left_values.max()),
+                            rtol=0.0,
+                            atol=1.0e-12,
+                        )
+                    ].tolist()
+                )
+                refined_right_top = set(
+                    source_indices[
+                        np.isclose(
+                            refined_right_values,
+                            float(refined_right_values.max()),
+                            rtol=0.0,
+                            atol=1.0e-12,
+                        )
+                    ].tolist()
+                )
+                row["margin_refined_top_max_set_jaccard"] = _jaccard(
+                    refined_left_top, refined_right_top
+                )
+            if (
+                np.unique(refined_left_values).size >= 2
+                and np.unique(refined_right_values).size >= 2
+            ):
+                refined_tau = kendalltau(
+                    refined_left_values, refined_right_values, variant="b"
+                ).statistic
+                row["margin_refined_kendall_tau_b"] = (
+                    float(refined_tau) if np.isfinite(refined_tau) else None
+                )
             for source_index in np.flatnonzero(query_comparable):
                 source_change_rows.append(
                     {
@@ -382,6 +480,12 @@ def compare_stability_pair(
                             abs(
                                 scores_left[source_index, target_index]
                                 - scores_right[source_index, target_index]
+                            )
+                        ),
+                        "margin_refined_absolute_score_change": float(
+                            abs(
+                                refined_left[source_index, target_index]
+                                - refined_right[source_index, target_index]
                             )
                         ),
                         "edge_flipped": bool(
@@ -397,10 +501,12 @@ def compare_stability_pair(
     candidate_rows = []
     for target_id in sorted(left_targets):
         left_candidates = {
-            str(item["trajectory_id"]): item for item in left_targets[target_id]["trajectories"]
+            str(item["trajectory_id"]): item
+            for item in left_targets[target_id]["trajectories"]
         }
         right_candidates = {
-            str(item["trajectory_id"]): item for item in right_targets[target_id]["trajectories"]
+            str(item["trajectory_id"]): item
+            for item in right_targets[target_id]["trajectories"]
         }
         if set(left_candidates) != set(right_candidates):
             raise ValueError("candidate ids differ inside paired target")
@@ -454,6 +560,9 @@ def compare_stability_pair(
         "reference_threshold_m": float(reference_threshold_m),
         "perturbed_threshold_m": float(perturbed_threshold_m),
         "absolute_score_changes": [float(value) for value in absolute_changes],
+        "margin_refined_absolute_score_changes": [
+            float(value) for value in refined_absolute_changes
+        ],
         "edge_flip_count": int(np.count_nonzero(edge_flips)),
         "comparable_pair_count": int(np.count_nonzero(comparable)),
         "validity_change_count": int(np.count_nonzero(validity_changes)),
@@ -474,8 +583,12 @@ def _numeric(values: Sequence[float]) -> Dict[str, Optional[float]]:
     }
 
 
-def summarize_stability_comparisons(comparisons: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
-    changes = [value for item in comparisons for value in item["absolute_score_changes"]]
+def summarize_stability_comparisons(
+    comparisons: Sequence[Mapping[str, Any]],
+) -> Dict[str, Any]:
+    changes = [
+        value for item in comparisons for value in item["absolute_score_changes"]
+    ]
     query_rows = [row for item in comparisons for row in item["query_rows"]]
     jaccards = [
         float(row["top_max_set_jaccard"])
@@ -486,6 +599,21 @@ def summarize_stability_comparisons(comparisons: Sequence[Mapping[str, Any]]) ->
         float(row["kendall_tau_b"])
         for row in query_rows
         if row["kendall_tau_b"] is not None
+    ]
+    refined_changes = [
+        value
+        for item in comparisons
+        for value in item["margin_refined_absolute_score_changes"]
+    ]
+    refined_jaccards = [
+        float(row["margin_refined_top_max_set_jaccard"])
+        for row in query_rows
+        if row["margin_refined_top_max_set_jaccard"] is not None
+    ]
+    refined_taus = [
+        float(row["margin_refined_kendall_tau_b"])
+        for row in query_rows
+        if row["margin_refined_kendall_tau_b"] is not None
     ]
     flip_count = int(sum(int(item["edge_flip_count"]) for item in comparisons))
     pair_count = int(sum(int(item["comparable_pair_count"]) for item in comparisons))
@@ -517,6 +645,12 @@ def summarize_stability_comparisons(comparisons: Sequence[Mapping[str, Any]]) ->
         ),
         "top_max_set_jaccard": _numeric(jaccards),
         "kendall_tau_b_defined_non_tied_queries": _numeric(taus),
+        "margin_refined_ranking": {
+            "target_kind": MARGIN_REFINED_RANKING_TARGET_V2,
+            "score_absolute_change": _numeric(refined_changes),
+            "top_max_set_jaccard": _numeric(refined_jaccards),
+            "kendall_tau_b_defined_non_tied_queries": _numeric(refined_taus),
+        },
         "candidate_rows": {
             name: {
                 "candidate_count": int(len(rows)),
@@ -544,11 +678,11 @@ def build_score_stability_report(
     contact_thresholds_m: Sequence[float],
 ) -> Dict[str, Any]:
     by_run = {(str(item["sample_id"]), int(item["seed"])): item for item in runs}
-    expected = {
-        (sample_id, int(seed)) for sample_id in references for seed in seeds
-    }
+    expected = {(sample_id, int(seed)) for sample_id in references for seed in seeds}
     if set(by_run) != expected:
-        raise ValueError("stability runs do not exactly match the predeclared scene/seed grid")
+        raise ValueError(
+            "stability runs do not exactly match the predeclared scene/seed grid"
+        )
     comparisons = []
     for sample_id in sorted(references):
         for seed in seeds:
@@ -615,7 +749,9 @@ def build_score_stability_report(
             "score_absolute_change": _numeric(
                 [float(row["absolute_score_change"]) for row in rows]
             ),
-            "binary_edge_flip_count": int(sum(bool(row["edge_flipped"]) for row in rows)),
+            "binary_edge_flip_count": int(
+                sum(bool(row["edge_flipped"]) for row in rows)
+            ),
             "binary_edge_flip_rate": float(
                 sum(bool(row["edge_flipped"]) for row in rows) / len(rows)
             ),
@@ -647,10 +783,40 @@ def build_score_stability_report(
         for summary in group_summaries.values()
     )
     overall_tau = overall["kendall_tau_b_defined_non_tied_queries"]["median"]
+    refined_overall_tau = overall["margin_refined_ranking"][
+        "kendall_tau_b_defined_non_tied_queries"
+    ]["median"]
     group_tau_gate = all(
         summary["kendall_tau_b_defined_non_tied_queries"]["median"] is None
         or float(summary["kendall_tau_b_defined_non_tied_queries"]["median"]) >= 0.0
         for summary in group_summaries.values()
+    )
+    refined_group_tau_gate = all(
+        summary["margin_refined_ranking"]["kendall_tau_b_defined_non_tied_queries"][
+            "median"
+        ]
+        is None
+        or float(
+            summary["margin_refined_ranking"]["kendall_tau_b_defined_non_tied_queries"][
+                "median"
+            ]
+        )
+        >= 0.0
+        for summary in group_summaries.values()
+    )
+    refined_group_jaccard_gate = all(
+        summary["margin_refined_ranking"]["top_max_set_jaccard"]["median"] is not None
+        and float(summary["margin_refined_ranking"]["top_max_set_jaccard"]["median"])
+        >= 0.80
+        for summary in group_summaries.values()
+    )
+    refined_tau_maintained = bool(
+        refined_overall_tau is not None
+        and float(refined_overall_tau) >= 0.70
+        and (
+            overall_tau is None
+            or float(refined_overall_tau) >= float(overall_tau) - 0.10
+        )
     )
     edge_flip_rate = overall["binary_edge_flip_rate"]
     concentration_checks = {
@@ -674,6 +840,9 @@ def build_score_stability_report(
             overall_tau is not None and float(overall_tau) >= 0.70
         ),
         "no_group_negative_median_kendall_tau_b": group_tau_gate,
+        "margin_refined_overall_median_kendall_tau_b_at_least_0.70_and_within_0.10_of_v1": refined_tau_maintained,
+        "margin_refined_every_group_median_top_max_set_jaccard_at_least_0.80": refined_group_jaccard_gate,
+        "margin_refined_no_group_negative_median_kendall_tau_b": refined_group_tau_gate,
         "binary_edge_flip_rate_at_most_0.10": bool(
             edge_flip_rate is not None and float(edge_flip_rate) <= 0.10
         ),
@@ -712,16 +881,37 @@ def build_score_stability_report(
                         if row["kendall_tau_b"] is not None
                     ]
                 ),
+                "margin_refined_score_absolute_change": _numeric(
+                    item["margin_refined_absolute_score_changes"]
+                ),
+                "margin_refined_top_max_set_jaccard": _numeric(
+                    [
+                        float(row["margin_refined_top_max_set_jaccard"])
+                        for row in query_rows
+                        if row["margin_refined_top_max_set_jaccard"] is not None
+                    ]
+                ),
+                "margin_refined_kendall_tau_b": _numeric(
+                    [
+                        float(row["margin_refined_kendall_tau_b"])
+                        for row in query_rows
+                        if row["margin_refined_kendall_tau_b"] is not None
+                    ]
+                ),
                 "undefined_query_change_count": int(
                     sum(bool(row["undefined_status_changed"]) for row in query_rows)
                 ),
                 "candidate_eligibility_change_count": int(
-                    sum(bool(row["eligibility_changed"]) for row in item["candidate_rows"])
+                    sum(
+                        bool(row["eligibility_changed"])
+                        for row in item["candidate_rows"]
+                    )
                 ),
             }
         )
     return {
         "schema": "ranked_blocker_score_stability_report_v1",
+        "margin_refined_ranking_target_kind": MARGIN_REFINED_RANKING_TARGET_V2,
         "selection_uses_test_groups": False,
         "perturbation": {
             "seeds": [int(value) for value in seeds],
@@ -749,7 +939,9 @@ def build_score_stability_report(
     }
 
 
-def _manifest(args: argparse.Namespace, selected: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
+def _manifest(
+    args: argparse.Namespace, selected: Sequence[Mapping[str, Any]]
+) -> Dict[str, Any]:
     git = lambda *parts: subprocess.check_output(
         ["git", "-C", str(PROJECT), *parts], text=True
     ).strip()
@@ -786,6 +978,7 @@ def _manifest(args: argparse.Namespace, selected: Sequence[Mapping[str, Any]]) -
             "varies_friction_for_static_score_stability": False,
             "uses_test_groups": False,
             "output_is_compact_audit_evidence_only": True,
+            "includes_margin_refined_ranking_stability": True,
         },
     }
 
@@ -793,7 +986,11 @@ def _manifest(args: argparse.Namespace, selected: Sequence[Mapping[str, Any]]) -
 def main(argv: Optional[Iterable[str]] = None) -> int:
     args = _parse_args(argv)
     if args.output_dir.exists():
-        raise SystemExit("refusing to overwrite existing output directory: {}".format(args.output_dir))
+        raise SystemExit(
+            "refusing to overwrite existing output directory: {}".format(
+                args.output_dir
+            )
+        )
     if int(args.workers) <= 0:
         raise SystemExit("--workers must be positive")
     seeds = [int(value) for value in args.perturbation_seeds]
@@ -865,7 +1062,9 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         with ProcessPoolExecutor(
             max_workers=int(args.workers), initializer=_worker_init
         ) as executor:
-            futures = {executor.submit(_run_perturbation_task, task): task for task in tasks}
+            futures = {
+                executor.submit(_run_perturbation_task, task): task for task in tasks
+            }
             for future in as_completed(futures):
                 task = futures[future]
                 result = future.result()

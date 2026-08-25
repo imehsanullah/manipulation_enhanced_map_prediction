@@ -27,7 +27,9 @@ from shelf_gym.utils.action_conditioned_relation_oracle import (
     summarize_signed_distances,
     rethreshold_static_oracle_contact_evidence,
 )
-from shelf_gym.scripts.inspect_action_conditioned_relation_oracle import select_scene_disjoint_round_robin
+from shelf_gym.scripts.inspect_action_conditioned_relation_oracle import (
+    select_scene_disjoint_round_robin,
+)
 from shelf_gym.scripts.validate_action_conditioned_relation_counterfactuals import (
     aggregate_counterfactual_records,
     select_relation_score_threshold,
@@ -35,7 +37,9 @@ from shelf_gym.scripts.validate_action_conditioned_relation_counterfactuals impo
     select_stratified_counterfactuals,
 )
 from shelf_gym.scripts.audit_ranked_blocker_score_stability import (
+    compare_stability_pair,
     select_predeclared_stability_records,
+    summarize_stability_comparisons,
     validate_stability_run_matching,
 )
 from shelf_gym.scripts.validate_ranked_blocker_counterfactuals import (
@@ -47,7 +51,9 @@ from shelf_gym.scripts.validate_ranked_blocker_counterfactuals import (
 
 
 class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
-    def test_frozen_test_policy_contract_preserves_unmatched_model_steps_as_noops(self) -> None:
+    def test_frozen_test_policy_contract_preserves_unmatched_model_steps_as_noops(
+        self,
+    ) -> None:
         base = {
             "sample_id": "14/scene",
             "target_instance_id": 50,
@@ -191,9 +197,7 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             joined["frozen_test_policies"],
         )
         self.assertEqual(
-            aggregated["accepted_absolute_probability"][
-                "dynamic_accessibility_at_k"
-            ],
+            aggregated["accepted_absolute_probability"]["dynamic_accessibility_at_k"],
             [0.0, 0.0, 0.3],
         )
         self.assertEqual(
@@ -204,9 +208,7 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             aggregated["accepted_absolute_probability"]["top1_regret"], 0.5
         )
         self.assertAlmostEqual(
-            aggregated["oracle_dynamic_best_single"][
-                "top1_dynamic_access_gain"
-            ],
+            aggregated["oracle_dynamic_best_single"]["top1_dynamic_access_gain"],
             0.5,
         )
         self.assertTrue(
@@ -258,7 +260,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             ]
         )
 
-    def test_stability_selection_and_pairing_use_scene_target_candidate_and_seed(self) -> None:
+    def test_stability_selection_and_pairing_use_scene_target_candidate_and_seed(
+        self,
+    ) -> None:
         records = [
             {"sample_id": "0/b"},
             {"sample_id": "1/c"},
@@ -296,7 +300,88 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "seed"):
             validate_stability_run_matching(reference, perturbed, expected_seed=2)
 
-    def test_dynamic_target_selection_balances_structure_and_rankability_per_group(self) -> None:
+    def test_stability_report_includes_margin_refined_rank_order(self) -> None:
+        def variant(refined_scores):
+            matrix = [
+                [None, None, 0.5],
+                [None, None, 0.5],
+                [None, None, None],
+            ]
+            valid = [
+                [False, False, True],
+                [False, False, True],
+                [False, False, False],
+            ]
+            candidate = {
+                "trajectory_id": "30/front_x0.50_z0.55",
+                "grasp_id": "front_x0.50_z0.55",
+                "eligible_for_scoring": True,
+                "blocked_by": [10, 20],
+                "blocked_by_stage": {
+                    "approach": [10],
+                    "grasp": [20],
+                    "extraction": [],
+                },
+            }
+            return {
+                "node_order_instance_ids": [10, 20, 30],
+                "score_matrix": matrix,
+                "score_valid_mask": valid,
+                "binary_adjacency_matrix": [
+                    [False, False, True],
+                    [False, False, True],
+                    [False, False, False],
+                ],
+                "stage_score_matrices": {
+                    stage: matrix for stage in ("approach", "grasp", "extraction")
+                },
+                "margin_refined_ranking_score_matrix": [
+                    [None, None, refined_scores[0]],
+                    [None, None, refined_scores[1]],
+                    [None, None, None],
+                ],
+                "margin_refined_ranking_score_valid_mask": valid,
+                "targets": [
+                    {
+                        "target_instance_id": 30,
+                        "trajectories": [candidate],
+                    }
+                ],
+            }
+
+        reference = {
+            "sample_id": "0/example",
+            "scene_group": "0",
+            "variants_by_hard_penetration_m": {"0.002": variant((0.40, 0.30))},
+        }
+        perturbed = {
+            "sample_id": "0/example",
+            "scene_group": "0",
+            "seed": 1,
+            "variants_by_hard_penetration_m": {"0.002": variant((0.39, 0.31))},
+        }
+
+        comparison = compare_stability_pair(reference, perturbed)
+        summary = summarize_stability_comparisons([comparison])
+
+        self.assertAlmostEqual(
+            summary["margin_refined_ranking"]["kendall_tau_b_defined_non_tied_queries"][
+                "median"
+            ],
+            1.0,
+        )
+        self.assertAlmostEqual(
+            summary["margin_refined_ranking"]["top_max_set_jaccard"]["median"],
+            1.0,
+        )
+        self.assertGreater(
+            summary["margin_refined_ranking"]["score_absolute_change"]["mean"],
+            0.0,
+        )
+
+    def test_dynamic_target_selection_balances_structure_and_rankability_per_group(
+        self,
+    ) -> None:
         contracts = []
         for group in ("0", "1"):
             for index, (structure, rankable) in enumerate(
@@ -334,16 +419,24 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertEqual(len(selected), 8)
         for group in ("0", "1"):
             group_rows = [item for item in selected if item["scene_group"] == group]
-            self.assertEqual({item["static_structure"] for item in group_rows}, {
-                "single_removal_positive",
-                "cooperative_zero_single_gain",
-            })
             self.assertEqual(
-                {bool(item["rank_correlation_eligible_structure"]) for item in group_rows},
+                {item["static_structure"] for item in group_rows},
+                {
+                    "single_removal_positive",
+                    "cooperative_zero_single_gain",
+                },
+            )
+            self.assertEqual(
+                {
+                    bool(item["rank_correlation_eligible_structure"])
+                    for item in group_rows
+                },
                 {False, True},
             )
 
-    def test_static_score_perturbation_changes_pose_and_yaw_but_never_friction(self) -> None:
+    def test_static_score_perturbation_changes_pose_and_yaw_but_never_friction(
+        self,
+    ) -> None:
         class FakeBullet:
             def __init__(self):
                 self.poses = {
@@ -362,7 +455,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             def getQuaternionFromEuler(self, euler):
                 return [float(euler[0]), float(euler[1]), float(euler[2]), 1.0]
 
-            def resetBasePositionAndOrientation(self, instance_id, position, orientation, **_kwargs):
+            def resetBasePositionAndOrientation(
+                self, instance_id, position, orientation, **_kwargs
+            ):
                 self.poses[int(instance_id)] = (list(position), list(orientation))
                 self.reset_calls.append(int(instance_id))
 
@@ -405,7 +500,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             self.assertTrue(np.allclose(record["world_aabb"][0], position - 0.1))
             self.assertTrue(np.allclose(record["world_aabb"][1], position + 0.1))
 
-    def test_static_contact_threshold_sensitivity_rebuilds_scores_and_eligibility(self) -> None:
+    def test_static_contact_threshold_sensitivity_rebuilds_scores_and_eligibility(
+        self,
+    ) -> None:
         def trajectory(target_id, source_id, source_distance, fixed_distance=None):
             fixed = (
                 {"shelf": {"minimum_signed_distance_m": fixed_distance}}
@@ -462,13 +559,17 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertFalse(frozen["score_valid_mask"][0][1])
         self.assertTrue(looser["score_valid_mask"][0][1])
 
-    def test_cnabu_sparse_support_converts_to_runtime_world_aabbs_without_gt(self) -> None:
+    def test_cnabu_sparse_support_converts_to_runtime_world_aabbs_without_gt(
+        self,
+    ) -> None:
         class FakeHeightmapGeneration:
             bounds = np.asarray([[-0.5, 0.5], [0.0, 2.0], [0.0, 2.0]])
 
             def map_point_to_world_point(self, point):
                 point = np.asarray(point, dtype=np.float64)
-                return np.asarray([-0.5 + point[0] * 0.1, point[1] * 0.1, point[2] * 0.1])
+                return np.asarray(
+                    [-0.5 + point[0] * 0.1, point[1] * 0.1, point[2] * 0.1]
+                )
 
         boxes = cnabu_sparse_support_world_aabbs(
             FakeHeightmapGeneration(),
@@ -479,16 +580,22 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertTrue(np.allclose(boxes[0][0], [0.1, 1.1, 0.3]))
         self.assertTrue(np.allclose(boxes[0][1], [0.3, 1.3, 0.5]))
 
-    def test_cnabu_sparse_support_robust_box_trims_low_mass_boundary_voxel(self) -> None:
+    def test_cnabu_sparse_support_robust_box_trims_low_mass_boundary_voxel(
+        self,
+    ) -> None:
         class FakeHeightmapGeneration:
             bounds = np.asarray([[-0.5, 0.5], [0.0, 2.0], [0.0, 2.0]])
 
             def map_point_to_world_point(self, point):
                 point = np.asarray(point, dtype=np.float64)
-                return np.asarray([-0.5 + point[0] * 0.01, point[1] * 0.01, point[2] * 0.01])
+                return np.asarray(
+                    [-0.5 + point[0] * 0.01, point[1] * 0.01, point[2] * 0.01]
+                )
 
         core = np.repeat(np.asarray([[3, 1, 2]], dtype=np.int16), 100, axis=0)
-        support = np.concatenate((core, np.asarray([[3, 1, 50]], dtype=np.int16)), axis=0)
+        support = np.concatenate(
+            (core, np.asarray([[3, 1, 50]], dtype=np.int16)), axis=0
+        )
         full = cnabu_sparse_support_world_aabbs(
             FakeHeightmapGeneration(),
             [support],
@@ -504,7 +611,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertGreater(full[0][1][0] - full[0][0][0], 0.4)
         self.assertAlmostEqual(robust[0][1][0] - robust[0][0][0], 0.01)
 
-    def test_cnabu_sparse_support_world_voxels_preserve_order_and_cell_extent(self) -> None:
+    def test_cnabu_sparse_support_world_voxels_preserve_order_and_cell_extent(
+        self,
+    ) -> None:
         class FakeHeightmapGeneration:
             bounds = np.asarray([[-0.5, 0.5], [0.0, 2.0], [0.0, 2.0]])
 
@@ -594,8 +703,12 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         names = list(result["pair_feature_names"])
         pair = features[0, 1, 0]
         self.assertEqual(features.shape, (2, 2, 9, 20))
-        self.assertEqual(pair[names.index("approach_robot_intersection_over_source")], 1.0)
-        self.assertEqual(pair[names.index("approach_robot_first_contact_progress")], 0.25)
+        self.assertEqual(
+            pair[names.index("approach_robot_intersection_over_source")], 1.0
+        )
+        self.assertEqual(
+            pair[names.index("approach_robot_first_contact_progress")], 0.25
+        )
         self.assertEqual(
             pair[names.index("approach_robot_longest_contiguous_contact_fraction")],
             0.25,
@@ -741,10 +854,14 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
                 return 77
 
             def createMultiBody(self, **_kwargs):
-                self.proxy_position = np.asarray(_kwargs["basePosition"], dtype=np.float64)
+                self.proxy_position = np.asarray(
+                    _kwargs["basePosition"], dtype=np.float64
+                )
                 return 99
 
-            def resetBasePositionAndOrientation(self, body, position, _orientation, **_kwargs):
+            def resetBasePositionAndOrientation(
+                self, body, position, _orientation, **_kwargs
+            ):
                 if int(body) == 99:
                     self.proxy_position = np.asarray(position, dtype=np.float64)
 
@@ -754,7 +871,11 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             def getClosestPoints(self, *, bodyA, bodyB, **_kwargs):
                 # Low candidate heights penetrate the known shelf with the
                 # robot. Higher candidates remain fixed-environment-free.
-                if int(bodyA) == self.env.robot_id and int(bodyB) == 50 and self.joints[2] < 0.99:
+                if (
+                    int(bodyA) == self.env.robot_id
+                    and int(bodyB) == 50
+                    and self.joints[2] < 0.99
+                ):
                     point = [0.0] * 9
                     point[3] = 0
                     point[8] = -0.003
@@ -782,7 +903,14 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
 
             def get_ik_joints(self, position, _orientation, link=None):
                 position = np.asarray(position, dtype=np.float64)
-                return [float(position[0]), float(position[1]), float(position[2]), 0.0, 0.0, 0.0]
+                return [
+                    float(position[0]),
+                    float(position[1]),
+                    float(position[2]),
+                    0.0,
+                    0.0,
+                    0.0,
+                ]
 
         env = FakeEnv()
         result = build_runtime_candidate_action_mask(
@@ -808,22 +936,18 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertFalse(result["safety"]["uses_gt_or_simulator_instance_ids"])
         self.assertFalse(result["safety"]["queries_dynamic_scene_objects"])
         self.assertTrue(result["safety"]["queries_known_fixed_environment_bodies"])
-        geometry = result["targets"][0]["candidates"][1][
-            "planner_swept_geometry"
-        ]
+        geometry = result["targets"][0]["candidates"][1]["planner_swept_geometry"]
         self.assertEqual(geometry["progress_bin_count"], 4)
         self.assertEqual(
             len(geometry["robot_link_aabbs_by_stage"]["approach"]),
             4,
         )
-        self.assertTrue(
-            all(geometry["robot_link_aabbs_by_stage"]["grasp"])
-        )
-        self.assertTrue(
-            all(geometry["carried_target_aabbs_by_stage"]["extraction"])
-        )
+        self.assertTrue(all(geometry["robot_link_aabbs_by_stage"]["grasp"]))
+        self.assertTrue(all(geometry["carried_target_aabbs_by_stage"]["extraction"]))
 
-    def test_clean_extraction_uses_monitored_blocker_not_unrelated_settling(self) -> None:
+    def test_clean_extraction_uses_monitored_blocker_not_unrelated_settling(
+        self,
+    ) -> None:
         blocked = summarize_monitored_displacement(
             object_displacements_m={"10": 0.04, "20": 1.0},
             monitored_instance_ids=[10],
@@ -853,7 +977,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertGreater(summary["progress_fraction"], 0.8)
         self.assertAlmostEqual(summary["planned_displacement_m"], np.hypot(0.085, 0.01))
 
-    def test_penetration_threshold_can_separate_supported_and_tolerated_contacts(self) -> None:
+    def test_penetration_threshold_can_separate_supported_and_tolerated_contacts(
+        self,
+    ) -> None:
         trials = [
             {
                 "metadata": {
@@ -874,6 +1000,7 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertEqual(selection["evaluable_trial_count"], 2)
         self.assertEqual(selection["best"]["f1"], 1.0)
         self.assertGreater(selection["best"]["threshold_m"], 0.004)
+
     def test_relation_threshold_uses_causally_evaluable_single_blockers(self) -> None:
         trials = [
             {
@@ -904,7 +1031,10 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertEqual(selection["eligible_single_blocker_trial_count"], 2)
         self.assertEqual(selection["best"]["f1"], 1.0)
         self.assertGreater(selection["best"]["threshold"], 0.2)
-    def test_signed_distance_summary_separates_contact_from_hard_penetration(self) -> None:
+
+    def test_signed_distance_summary_separates_contact_from_hard_penetration(
+        self,
+    ) -> None:
         tolerable = summarize_signed_distances([-0.0005, 0.0], hard_penetration_m=0.002)
         hard = summarize_signed_distances([-0.003], hard_penetration_m=0.002)
 
@@ -931,11 +1061,17 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
                         },
                     }
                 ],
-                "interventions": [{"success_delta": float(intervention) - float(intact)}],
+                "interventions": [
+                    {"success_delta": float(intervention) - float(intact)}
+                ],
             }
 
         summary = aggregate_counterfactual_records(
-            [record(False, True, False), record(True, True, False), record(False, False, True)]
+            [
+                record(False, True, False),
+                record(True, True, False),
+                record(False, False, True),
+            ]
         )
 
         self.assertEqual(
@@ -950,7 +1086,11 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
                 "sample_id": sample_id,
                 "node_order_instance_ids": [10, 20, 30],
                 "geometry_pseudo_gt_v0": {
-                    "adjacency_matrix": [[0, geometry_edge, 0], [0, 0, 0], [0, geometry_edge, 0]]
+                    "adjacency_matrix": [
+                        [0, geometry_edge, 0],
+                        [0, 0, 0],
+                        [0, geometry_edge, 0],
+                    ]
                 },
                 "targets": [
                     {
@@ -982,7 +1122,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             },
         )
 
-    def test_counterfactual_descriptor_distinguishes_action_only_single_blocker(self) -> None:
+    def test_counterfactual_descriptor_distinguishes_action_only_single_blocker(
+        self,
+    ) -> None:
         scene = {
             "sample_id": "8/example",
             "node_order_instance_ids": [10, 20],
@@ -1022,7 +1164,9 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
             ],
         )
 
-    def test_front_extraction_waypoints_move_toward_low_y_opening_and_lift(self) -> None:
+    def test_front_extraction_waypoints_move_toward_low_y_opening_and_lift(
+        self,
+    ) -> None:
         config = OracleActionFamilyConfig(opening_y=0.68)
         waypoints = front_extraction_waypoints(
             world_aabb=[[0.0, 0.85, 0.91], [0.10, 0.95, 1.11]],
@@ -1055,9 +1199,13 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertGreater(config.lift_distance_m, 0.0)
         self.assertLess(config.lift_distance_m, 0.04)
 
-    def test_interpolate_joint_configs_keeps_endpoints_without_duplicate_join(self) -> None:
+    def test_interpolate_joint_configs_keeps_endpoints_without_duplicate_join(
+        self,
+    ) -> None:
         first = interpolate_joint_configs(np.zeros(2), np.ones(2), 3)
-        second = interpolate_joint_configs(np.ones(2), np.full(2, 2.0), 3, include_start=False)
+        second = interpolate_joint_configs(
+            np.ones(2), np.full(2, 2.0), 3, include_start=False
+        )
         joined = first + second
 
         self.assertEqual(len(joined), 5)
@@ -1084,11 +1232,25 @@ class ActionConditionedRelationOracleAdapterTest(unittest.TestCase):
         self.assertEqual(records[0]["bbox_yx_minmax"], [0, 0, 1, 1])
         self.assertEqual(records[1]["pixel_count"], 6)
 
-    def test_geometry_baseline_and_comparison_keep_undefined_oracle_pairs_separate(self) -> None:
+    def test_geometry_baseline_and_comparison_keep_undefined_oracle_pairs_separate(
+        self,
+    ) -> None:
         objects = [
-            {"instance_id": 10, "bbox_yx_minmax": [0, 0, 2, 2], "centroid_yx": [1.0, 1.0]},
-            {"instance_id": 20, "bbox_yx_minmax": [3, 1, 5, 3], "centroid_yx": [4.0, 2.0]},
-            {"instance_id": 30, "bbox_yx_minmax": [6, 4, 8, 6], "centroid_yx": [7.0, 5.0]},
+            {
+                "instance_id": 10,
+                "bbox_yx_minmax": [0, 0, 2, 2],
+                "centroid_yx": [1.0, 1.0],
+            },
+            {
+                "instance_id": 20,
+                "bbox_yx_minmax": [3, 1, 5, 3],
+                "centroid_yx": [4.0, 2.0],
+            },
+            {
+                "instance_id": 30,
+                "bbox_yx_minmax": [6, 4, 8, 6],
+                "centroid_yx": [7.0, 5.0],
+            },
         ]
         geometry = build_geometry_pseudo_gt_adjacency(objects)
         self.assertEqual(geometry, [[0, 1, 0], [0, 0, 0], [0, 0, 0]])

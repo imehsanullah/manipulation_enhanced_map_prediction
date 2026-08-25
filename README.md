@@ -126,5 +126,49 @@ separate no-GT materializer for approved experiments. It writes a small mask
 JSON per explicit record plus an enriched records JSON, refuses overwrites,
 and supports `--validate-only` without writing outputs.
 
+## Experimental PSG-MEM action boundary
+
+`shelf_gym.utils.psg_mem_action_adapter.PsgMemActionAdapter` is the
+default-off execution boundary for the sibling `scene_graph_mem` PSG-MEM
+consumer. When disabled it does not call the graph decision provider or an
+action function, so the official policy remains the caller. In an explicitly
+enabled treatment it accepts a sidecar decision only when the selected action
+bit-matches the frozen candidate set (or the caller-provided official
+fallback), then invokes the injected MEM executor exactly once.
+
+The adapter rejects target queries carrying evaluation object IDs, GT masks,
+simulator body IDs, or instance IDs. It does not make PSG-MEM part of the
+official default pipeline. The completed paired X3/M11 evidence does not show
+that the experimental consumer improves retrieval: final PSG-MEM tied official
+at `32/120`, trailed the stronger flat control at `33/120`, and tied shuffled
+at `32/120`. The implementation remains default-off; full results and claim
+boundaries are in `scene_graph_mem/docs/psg_mem_thesis_outputs.md`.
+
+The concrete X3 integration remains separate from the official default entry
+point:
+
+- `shelf_gym/scripts/prepare_psg_mem_x3_episode.py` prepares a hash-pinned,
+  runtime-redacted episode JSON from already existing artifacts, embedding the
+  exact runtime/evaluator adapter paths and hashes without starting simulation;
+- `shelf_gym/scripts/psg_mem_x3_runtime_adapter.py` initializes the official
+  MEM loop only when the approved X3 driver calls its factory, exposes the
+  frozen view/push/no-op set, delegates no-GT learned inference to the
+  hash-pinned `scene_graph_mem` conda sidecar, supports legitimate zero-object
+  cold-start frontier graphs, and closes all process-local state on every exit;
+- `shelf_gym/scripts/psg_mem_x3_evaluator_adapter.py` alone receives the hidden
+  target ID, evaluates the 3-by-3 physical-access endpoint read-only, verifies
+  exact simulator-state restoration, and globally one-to-one maps diagnostic
+  physical blockers to runtime node IDs without returning simulator IDs to the
+  planner.
+
+The production MEM push token includes a SHA-256 identity of the exact path,
+annotations, and motion parameters. Its contact/end points are converted from
+the 120-row MEM crop into the raw 140-by-200 graph frame with row offset 10;
+the derived direction is passed only as non-privileged post-push tracker
+context. None of these files launches an experiment unless the separate X3
+driver receives an approved episode tuple. Before importing either adapter,
+that driver verifies the episode-embedded paths and SHA-256 identities against
+the exact files requested on its command line.
+
 # Issue Tracker
  - 

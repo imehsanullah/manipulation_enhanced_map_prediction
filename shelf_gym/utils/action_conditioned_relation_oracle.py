@@ -1885,6 +1885,262 @@ def evaluate_saved_scene(
     return record, debug_candidates
 
 
+def evaluate_live_target_access_feasibility(
+    env: Any,
+    *,
+    target_instance_id: int,
+    config: Optional[OracleActionFamilyConfig] = None,
+    include_evaluation_private_blockers: bool = False,
+) -> Dict[str, Any]:
+    """Evaluate the frozen 3x3 clean-access endpoint on the live scene.
+
+    This function is evaluator-only: the simulator target ID must come from
+    the hidden evaluation token and is never returned to the runtime planner.
+    It snapshots every current object pose and arm/gripper joint, runs the
+    existing collision-only candidate oracle for the target, and restores the
+    exact snapshot in ``finally``.  No action is stepped or retained.
+    """
+
+    if isinstance(target_instance_id, bool) or not isinstance(
+        target_instance_id, (int, np.integer)
+    ):
+        raise ValueError("target_instance_id must be an integer")
+    target_id = int(target_instance_id)
+    if not isinstance(include_evaluation_private_blockers, bool):
+        raise ValueError("include_evaluation_private_blockers must be boolean")
+    object_ids = [int(value) for value in env.current_obj_ids]
+    if target_id not in object_ids:
+        raise ValueError("evaluation target is not in the current live scene")
+    cfg = config or OracleActionFamilyConfig()
+    started = time.perf_counter()
+    physics = env._p
+    body_ids = [int(env.robot_id), *object_ids]
+    body_states = {
+        body_id: {
+            "pose": physics.getBasePositionAndOrientation(
+                body_id, physicsClientId=env.client_id
+            ),
+            "velocity": physics.getBaseVelocity(
+                body_id, physicsClientId=env.client_id
+            ),
+        }
+        for body_id in body_ids
+    }
+    joint_indices = [int(value) for value in env.arm_and_gripper_joint_indices]
+    joint_states = {
+        index: tuple(
+            float(value)
+            for value in physics.getJointState(
+                env.robot_id, index, physicsClientId=env.client_id
+            )[:2]
+        )
+        for index in joint_indices
+    }
+    save_state = getattr(physics, "saveState", None)
+    restore_state = getattr(physics, "restoreState", None)
+    remove_state = getattr(physics, "removeState", None)
+    saved_state_id = (
+        int(save_state(physicsClientId=env.client_id))
+        if callable(save_state)
+        and callable(restore_state)
+        and callable(remove_state)
+        else None
+    )
+    observations: List[Dict[str, Any]] = []
+    restored = False
+    saved_state_errors: List[Exception] = []
+    try:
+        env.reset_robot(env.initial_parameters)
+        env.move_gripper(0.085)
+        initial_arm_config = np.asarray(
+            env.get_current_joint_config(), dtype=np.float64
+        )
+        target_aabb = physics.getAABB(target_id, physicsClientId=env.client_id)
+        target_record = {
+            "instance_id": target_id,
+            "world_aabb": [
+                [float(value) for value in target_aabb[0]],
+                [float(value) for value in target_aabb[1]],
+            ],
+        }
+        fixed_body_ids = {
+            "plane": int(env.planeID),
+            "table": int(env.UR5Stand_id),
+            "shelf": int(env.shelf_id),
+            "wall": int(env.wall_id),
+            **{
+                "rack_{}".format(index): int(body_id)
+                for index, body_id in enumerate(env.rack_ids)
+            },
+        }
+        for lateral_fraction in cfg.candidate_lateral_fractions:
+            for height_fraction in cfg.candidate_height_fractions:
+                observation, _debug = _build_candidate(
+                    env,
+                    target_record=target_record,
+                    lateral_fraction=float(lateral_fraction),
+                    height_fraction=float(height_fraction),
+                    object_ids=object_ids,
+                    fixed_body_ids=fixed_body_ids,
+                    initial_arm_config=initial_arm_config,
+                    config=cfg,
+                )
+                observations.append(dict(observation))
+    finally:
+        if saved_state_id is not None:
+            try:
+                restore_state(
+                    stateId=saved_state_id, physicsClientId=env.client_id
+                )
+            except Exception as error:
+                saved_state_errors.append(error)
+            try:
+                remove_state(
+                    stateUniqueId=saved_state_id,
+                    physicsClientId=env.client_id,
+                )
+            except Exception as error:
+                saved_state_errors.append(error)
+        for body_id, state in body_states.items():
+            pose = state["pose"]
+            physics.resetBasePositionAndOrientation(
+                body_id,
+                pose[0],
+                pose[1],
+                physicsClientId=env.client_id,
+            )
+            velocity = state["velocity"]
+            physics.resetBaseVelocity(
+                body_id,
+                linearVelocity=velocity[0],
+                angularVelocity=velocity[1],
+                physicsClientId=env.client_id,
+            )
+        for joint_index, state in joint_states.items():
+            physics.resetJointState(
+                env.robot_id,
+                joint_index,
+                targetValue=state[0],
+                targetVelocity=state[1],
+                physicsClientId=env.client_id,
+            )
+        physics.performCollisionDetection(physicsClientId=env.client_id)
+        current_body_states = {
+            body_id: {
+                "pose": physics.getBasePositionAndOrientation(
+                    body_id, physicsClientId=env.client_id
+                ),
+                "velocity": physics.getBaseVelocity(
+                    body_id, physicsClientId=env.client_id
+                ),
+            }
+            for body_id in body_ids
+        }
+        current_joint_states = {
+            index: tuple(
+                float(value)
+                for value in physics.getJointState(
+                    env.robot_id, index, physicsClientId=env.client_id
+                )[:2]
+            )
+            for index in joint_indices
+        }
+
+        def flattened(parts: Sequence[Any]) -> np.ndarray:
+            return np.concatenate(
+                [np.asarray(part, dtype=np.float64).reshape(-1) for part in parts]
+            )
+
+        restored = bool(
+            all(
+                np.allclose(
+                    flattened(body_states[body_id][field]),
+                    flattened(current_body_states[body_id][field]),
+                    rtol=0.0,
+                    atol=1.0e-12,
+                )
+                for body_id in body_ids
+                for field in ("pose", "velocity")
+            )
+            and all(
+                np.allclose(
+                    np.asarray(joint_states[index], dtype=np.float64),
+                    np.asarray(current_joint_states[index], dtype=np.float64),
+                    rtol=0.0,
+                    atol=1.0e-12,
+                )
+                for index in joint_indices
+            )
+        )
+        if not restored:
+            raise RuntimeError("live access evaluator failed to restore simulator state")
+        if saved_state_errors:
+            raise RuntimeError(
+                "live access evaluator could not restore/remove its PyBullet state"
+            ) from saved_state_errors[0]
+
+    clean = [
+        observation
+        for observation in observations
+        if bool(observation.get("eligible_for_scoring", False))
+        and not bool(observation.get("fixed_environment_collision", False))
+        and not list(observation.get("blocked_by") or [])
+    ]
+    eligible = [
+        observation
+        for observation in observations
+        if bool(observation.get("eligible_for_scoring", False))
+    ]
+    blocker_ids = sorted(
+        {
+            int(instance_id)
+            for observation in eligible
+            for instance_id in observation.get("blocked_by", [])
+            if int(instance_id) != target_id
+        }
+    )
+    blocker_candidate_counts = {
+        str(instance_id): int(
+            sum(
+                instance_id in set(observation.get("blocked_by") or [])
+                for observation in eligible
+            )
+        )
+        for instance_id in blocker_ids
+    }
+    result = {
+        "schema": "psg_mem_live_target_access_evaluation_v1",
+        "access_feasible": bool(clean),
+        "candidate_count": len(observations),
+        "eligible_candidate_count": len(eligible),
+        "clean_candidate_count": len(clean),
+        "blocked_candidate_count": int(
+            sum(bool(observation.get("blocked_by")) for observation in eligible)
+        ),
+        "unique_physical_blocker_count": len(blocker_ids),
+        "fixed_environment_collision_count": int(
+            sum(
+                bool(observation.get("fixed_environment_collision", False))
+                for observation in observations
+            )
+        ),
+        "candidate_family": "fixed_v1_3x3_frontal_clean_extraction",
+        "endpoint": "physical_clean_extraction_feasibility_read_only",
+        "read_only": True,
+        "environment_state_restored": restored,
+        "evaluation_only_simulator_target_id": True,
+        "runtime_receives_simulator_target_id": False,
+        "runtime_seconds": float(time.perf_counter() - started),
+    }
+    if include_evaluation_private_blockers:
+        result["_evaluation_private"] = {
+            "physical_blocker_instance_ids": blocker_ids,
+            "blocker_candidate_counts": blocker_candidate_counts,
+            "eligible_candidate_count": len(eligible),
+        }
+    return result
+
+
 def render_scene_oracle_debug(
     scene_record: Mapping[str, Any],
     output_path: Path | str,
