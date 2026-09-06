@@ -193,7 +193,7 @@ class ManipulationEnhancedMapping(PushingCollection):
                         best_push = 0
                         best_push_ig = 0.0
                         if push_candidates['paths'] is not None:
-                            _, best_push, best_push_ig = self.eval_push_igs(push_candidates, previous_semantic_map,
+                            push_view, best_push, best_push_ig = self.eval_push_igs(push_candidates, previous_semantic_map,
                                                                             use_delta_H=True, skip=5)
                             push_time = time.time() - t_push_plan
                         if debug: print(f"IG obs+1={max_obs_ig:.3f} vs IG push={best_push_ig:.3f}")
@@ -208,6 +208,7 @@ class ManipulationEnhancedMapping(PushingCollection):
                         pushes.append(2)
                         fresh_push = not collision
                         if fresh_push:
+                            viewpoint = push_view
                             previous_views.clear()
                             previous_map = (push_candidates['possible_previous_maps'][best_push][None])
                             previous_semantic_map = (push_candidates['possible_semantic_maps'][best_push][None])
@@ -217,10 +218,10 @@ class ManipulationEnhancedMapping(PushingCollection):
                         if fresh_push:
                             if debug: print("Observing after push")
                             fresh_push = False
-                            previous_map, previous_semantic_map = self.execute_observation(previous_views, viewpoint,
-                                                                                           previous_map,
-                                                                                           previous_semantic_map)
-                            pushes.append(0)
+                        previous_map, previous_semantic_map = self.execute_observation(previous_views, viewpoint,
+                                                                                       previous_map,
+                                                                                       previous_semantic_map)
+                        pushes.append(0)
 
                 else:
                     # Only observation allowed
@@ -635,9 +636,13 @@ class ManipulationEnhancedMapping(PushingCollection):
             push_data = self.ps.get_samples(env=self, occ_map=prob_padded, num_points=num_points, just_endpoints=True, verbose=False)
 
         #Convert motion parameters to numpy
-        motion_parametrization = np.array([int(x) if isinstance(x, cp.ndarray) else x for x in push_data['motion_parametrization']]).reshape(-1, 6)
+        motion_parameters = push_data['motion_parametrization']
+        if motion_parameters is None:
+            motion_parameters = []
+        motion_parametrization = np.array([int(x) if isinstance(x, cp.ndarray) else x for x in motion_parameters]).reshape(-1, 6)
 
         if motion_parametrization.shape[0] == 0:
+            print("No feasible push candidates; returning empty push predictions")
             return {
                 'paths': None,
                 'path_annotations': None,

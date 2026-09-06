@@ -9,6 +9,7 @@ import heapq
 from skimage.morphology import h_maxima
 
 from shapely import Polygon, MultiPolygon
+from shapely.errors import GEOSException
 from scipy.ndimage import distance_transform_edt
 from skimage.draw import line
 from scipy.ndimage import label as connected_components
@@ -588,7 +589,12 @@ def get_samples(corridor_vis, point, label,sem_conf,occupacy_uncertainty,num_sam
         #for corridor, score in best_corridor[]:
         corridor, score = best_corridor[0]
         _, _, width, start, end, _, _ = corridor
-        samples = push_sample(mask, center, start, end, num_samples)
+        try:
+            samples = push_sample(mask, center, start, end, num_samples)
+        except GEOSException as exc:
+            # An invalid geometric candidate is not an executable push.
+            print(f"Skipping push candidate with GEOS geometry error: {exc}", flush=True)
+            return None
         all_samples.append((corridor, samples, score))
         #end_push = time.time()
         #print('Time taken for puchvector: {} seconds'.format(end_push - directions_time))

@@ -1,3 +1,5 @@
+For the corrected MEM reproduction branch, see [evaluation instructions](tools/reproduction/README.md).
+
 # Map Space Belief Prediction for<br/> Manipulation-Enhanced Mapping
 ![Overview figure](./images/overview.png)
 This repository contains the code for reproducing the work of the RSS 2025 paper ["Map Space Belief Prediction for Manipulation-Enhanced Mapping"](https://arxiv.org/pdf/2502.20606), as well as the code for training the Calibrated Neural-Accelerated

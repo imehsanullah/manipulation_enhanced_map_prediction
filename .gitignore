@@ -12,3 +12,7 @@ wandb
 *.npz
 *.npy
 *.json
+
+# Local evaluation datasets and run outputs
+/shelf_gym/data1/
+/reproduction_runs/
