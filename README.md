@@ -1,6 +1,11 @@
+# Map Space Belief Prediction for<br/> Manipulation-Enhanced Mapping
+
+See the [repository and branch guide](https://github.com/imehsanullah/thesis_records/blob/main/notes/repositories_and_branches.md) for local/GitHub navigation and future update policies. Its local copy is thesis_records/notes/repositories_and_branches.md under the workspace root.
+
+> Preserved MEM comparison repository. `mem-reproduction` is the corrected baseline; `dev` contains legacy thesis graph integration. Active thesis work uses MS-MEM. Read the parent AGENTS.md before execution.
+
 For the corrected MEM reproduction branch, see [evaluation instructions](tools/reproduction/README.md).
 
-# Map Space Belief Prediction for<br/> Manipulation-Enhanced Mapping
 ![Overview figure](./images/overview.png)
 This repository contains the code for reproducing the work of the RSS 2025 paper ["Map Space Belief Prediction for Manipulation-Enhanced Mapping"](https://arxiv.org/pdf/2502.20606), as well as the code for training the Calibrated Neural-Accelerated
 Belief Update (CNABU) networks introduced in this paper. 
@@ -76,5 +81,4 @@ Alternatively, you can collect the data for the [viewpoint push planning](https:
 ```
 
 # Issue Tracker
- - 
-
+ -
